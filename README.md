@@ -12,7 +12,7 @@ Open `http://127.0.0.1:4173`.
 
 ## Current implementation
 
-The app restores the original rich layout payload and renders it server-side for Safari compatibility. The server also uses high-resolution remote Turner imagery for the hero and collection surfaces, while preserving local fallbacks for model cards.
+The app restores the original rich layout payload and renders it server-side for Safari compatibility. Hero and collection surfaces use high-resolution Turner imagery, while model cards retain high-resolution remote images with local fallbacks.
 
 ## Included
 
