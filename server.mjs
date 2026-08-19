@@ -2,14 +2,10 @@ import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gunzip } from 'node:zlib';
-import { promisify } from 'node:util';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = Number(process.env.PORT || 4173);
 const host = process.env.HOST || '127.0.0.1';
-const gunzipAsync = promisify(gunzip);
-
 const mime = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -21,11 +17,8 @@ const mime = {
   '.webp': 'image/webp',
   '.avif': 'image/avif',
   '.svg': 'image/svg+xml',
-  '.gz': 'application/octet-stream',
 };
-
-const noStoreExts = new Set(['.html', '.js', '.gz']);
-const payloadStatus = new Map();
+const noStoreExts = new Set(['.html', '.js', '.json']);
 
 function requestPath(urlPath = '/') {
   return decodeURIComponent(urlPath.split('?')[0]).replace(/^\/+/, '');
@@ -36,139 +29,38 @@ function safePath(urlPath) {
   return normalized.startsWith('..') ? null : join(root, normalized);
 }
 
-function looksLikeBase64Gzip(text) {
-  const compact = text.replace(/\s+/g, '');
-  return compact.startsWith('H4sI') && /^[A-Za-z0-9+/=]+$/.test(compact);
-}
-
-async function decodePayload(relativePath) {
-  const file = await readFile(join(root, relativePath));
-
-  if (file.length >= 2 && file[0] === 0x1f && file[1] === 0x8b) {
-    const decoded = (await gunzipAsync(file)).toString('utf8');
-    payloadStatus.set(relativePath, { mode: 'gzip-bytes', bytes: file.length, decoded: decoded.length });
-    return decoded;
+async function serveFile(req, res) {
+  const route = requestPath(req.url || '/');
+  if (route === '__health') {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store, max-age=0' });
+    res.end(JSON.stringify({ ok: true, mode: 'standalone-static', pid: process.pid, root, host, port }, null, 2));
+    return;
   }
 
-  const text = file.toString('utf8');
-  const trimmed = text.trim();
-
-  if (looksLikeBase64Gzip(trimmed)) {
-    const base64Bytes = Buffer.from(trimmed.replace(/\s+/g, ''), 'base64');
-    const decoded = (await gunzipAsync(base64Bytes)).toString('utf8');
-    payloadStatus.set(relativePath, { mode: 'base64-gzip-text', bytes: file.length, decoded: decoded.length });
-    return decoded;
-  }
+  let filePath = safePath(req.url || '/');
+  if (!filePath) throw new Error('Bad path');
 
   try {
-    const decoded = (await gunzipAsync(file)).toString('utf8');
-    payloadStatus.set(relativePath, { mode: 'gzip-fallback', bytes: file.length, decoded: decoded.length });
-    return decoded;
+    if ((await stat(filePath)).isDirectory()) filePath = join(filePath, 'index.html');
   } catch {
-    payloadStatus.set(relativePath, { mode: 'plain-text', bytes: file.length, decoded: text.length });
-    return text;
+    filePath = join(root, 'index.html');
   }
-}
 
-function stripPayloadScript(html) {
-  return html.replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, '');
-}
-
-async function renderApp() {
-  const [rawHtml, css, js] = await Promise.all([
-    decodePayload('payload/index.html.gz'),
-    decodePayload('payload/styles.css.gz'),
-    decodePayload('payload/app.js.gz'),
-  ]);
-  const safeJs = js.replaceAll('</script>', '<\\/script>');
-  return stripPayloadScript(rawHtml)
-    .replace('</head>', `<style data-payload="styles.css.gz">${css}</style></head>`)
-    .replace('</body>', `<script data-payload="app.js.gz">${safeJs}</script></body>`);
-}
-
-async function payloadHealth() {
-  await Promise.all([
-    decodePayload('payload/index.html.gz'),
-    decodePayload('payload/styles.css.gz'),
-    decodePayload('payload/app.js.gz'),
-  ]);
-  return {
-    ok: true,
-    root,
-    pid: process.pid,
-    host,
-    port,
-    payloads: Object.fromEntries(payloadStatus.entries()),
-  };
-}
-
-function send(res, status, body, headers = {}) {
-  res.writeHead(status, headers);
+  const ext = extname(filePath).toLowerCase();
+  const body = await readFile(filePath);
+  res.writeHead(200, {
+    'Content-Type': mime[ext] || 'application/octet-stream',
+    'Cache-Control': noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=3600',
+  });
   res.end(body);
 }
 
 const server = http.createServer(async (req, res) => {
   try {
-    const cleanPath = requestPath(req.url || '/');
-
-    if (cleanPath === '__health') {
-      const body = JSON.stringify(await payloadHealth(), null, 2);
-      send(res, 200, body, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'no-store, max-age=0',
-      });
-      return;
-    }
-
-    if (cleanPath === '' || cleanPath === 'index.html') {
-      const html = await renderApp();
-      send(res, 200, html, {
-        'Content-Type': mime['.html'],
-        'Cache-Control': 'no-store, max-age=0',
-      });
-      return;
-    }
-
-    let filePath = safePath(req.url || '/');
-    if (!filePath) throw new Error('Bad path');
-
-    try {
-      if ((await stat(filePath)).isDirectory()) {
-        const html = await renderApp();
-        send(res, 200, html, {
-          'Content-Type': mime['.html'],
-          'Cache-Control': 'no-store, max-age=0',
-        });
-        return;
-      }
-    } catch {
-      const ext = extname(filePath).toLowerCase();
-      if (!ext) {
-        const html = await renderApp();
-        send(res, 200, html, {
-          'Content-Type': mime['.html'],
-          'Cache-Control': 'no-store, max-age=0',
-        });
-        return;
-      }
-      send(res, 404, 'Not found', {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-store',
-      });
-      return;
-    }
-
-    const ext = extname(filePath).toLowerCase();
-    const body = await readFile(filePath);
-    send(res, 200, body, {
-      'Content-Type': mime[ext] || 'application/octet-stream',
-      'Cache-Control': noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=3600',
-    });
+    await serveFile(req, res);
   } catch (error) {
-    send(res, 500, `Server error: ${error.message}`, {
-      'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'no-store',
-    });
+    res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
+    res.end(`Server error: ${error.message}`);
   }
 });
 
