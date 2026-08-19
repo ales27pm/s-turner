@@ -25,6 +25,7 @@ const mime = {
 };
 
 const noStoreExts = new Set(['.html', '.js', '.gz']);
+const payloadStatus = new Map();
 
 function requestPath(urlPath = '/') {
   return decodeURIComponent(urlPath.split('?')[0]).replace(/^\/+/, '');
@@ -35,9 +36,38 @@ function safePath(urlPath) {
   return normalized.startsWith('..') ? null : join(root, normalized);
 }
 
-async function gunzipText(relativePath) {
-  const compressed = await readFile(join(root, relativePath));
-  return (await gunzipAsync(compressed)).toString('utf8');
+function looksLikeBase64Gzip(text) {
+  const compact = text.replace(/\s+/g, '');
+  return compact.startsWith('H4sI') && /^[A-Za-z0-9+/=]+$/.test(compact);
+}
+
+async function decodePayload(relativePath) {
+  const file = await readFile(join(root, relativePath));
+
+  if (file.length >= 2 && file[0] === 0x1f && file[1] === 0x8b) {
+    const decoded = (await gunzipAsync(file)).toString('utf8');
+    payloadStatus.set(relativePath, { mode: 'gzip-bytes', bytes: file.length, decoded: decoded.length });
+    return decoded;
+  }
+
+  const text = file.toString('utf8');
+  const trimmed = text.trim();
+
+  if (looksLikeBase64Gzip(trimmed)) {
+    const base64Bytes = Buffer.from(trimmed.replace(/\s+/g, ''), 'base64');
+    const decoded = (await gunzipAsync(base64Bytes)).toString('utf8');
+    payloadStatus.set(relativePath, { mode: 'base64-gzip-text', bytes: file.length, decoded: decoded.length });
+    return decoded;
+  }
+
+  try {
+    const decoded = (await gunzipAsync(file)).toString('utf8');
+    payloadStatus.set(relativePath, { mode: 'gzip-fallback', bytes: file.length, decoded: decoded.length });
+    return decoded;
+  } catch {
+    payloadStatus.set(relativePath, { mode: 'plain-text', bytes: file.length, decoded: text.length });
+    return text;
+  }
 }
 
 function stripPayloadScript(html) {
@@ -46,14 +76,30 @@ function stripPayloadScript(html) {
 
 async function renderApp() {
   const [rawHtml, css, js] = await Promise.all([
-    gunzipText('payload/index.html.gz'),
-    gunzipText('payload/styles.css.gz'),
-    gunzipText('payload/app.js.gz'),
+    decodePayload('payload/index.html.gz'),
+    decodePayload('payload/styles.css.gz'),
+    decodePayload('payload/app.js.gz'),
   ]);
   const safeJs = js.replaceAll('</script>', '<\\/script>');
   return stripPayloadScript(rawHtml)
     .replace('</head>', `<style data-payload="styles.css.gz">${css}</style></head>`)
     .replace('</body>', `<script data-payload="app.js.gz">${safeJs}</script></body>`);
+}
+
+async function payloadHealth() {
+  await Promise.all([
+    decodePayload('payload/index.html.gz'),
+    decodePayload('payload/styles.css.gz'),
+    decodePayload('payload/app.js.gz'),
+  ]);
+  return {
+    ok: true,
+    root,
+    pid: process.pid,
+    host,
+    port,
+    payloads: Object.fromEntries(payloadStatus.entries()),
+  };
 }
 
 function send(res, status, body, headers = {}) {
@@ -64,6 +110,16 @@ function send(res, status, body, headers = {}) {
 const server = http.createServer(async (req, res) => {
   try {
     const cleanPath = requestPath(req.url || '/');
+
+    if (cleanPath === '__health') {
+      const body = JSON.stringify(await payloadHealth(), null, 2);
+      send(res, 200, body, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store, max-age=0',
+      });
+      return;
+    }
+
     if (cleanPath === '' || cleanPath === 'index.html') {
       const html = await renderApp();
       send(res, 200, html, {
