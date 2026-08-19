@@ -10,17 +10,18 @@ npm start
 
 Open `http://127.0.0.1:4173`.
 
+## Current implementation
+
+The app restores the original rich layout payload and renders it server-side for Safari compatibility. The server also uses high-resolution remote Turner imagery for the hero and collection surfaces, while preserving local fallbacks for model cards.
+
 ## Included
 
 - interactive model catalogue and filters
-- model comparison
+- model comparison with hide/clear controls
 - project process explorer
 - inclusions/responsibility matrix
 - budget planner with local draft persistence
 - FAQ and contact prototype
 - responsive navigation
-- locally bundled generated visual assets in AVIF
-
-The browser bootstrap inflates the exact HTML/CSS/JS payload from `payload/*.gz` and injects it at startup. This keeps the committed prototype compact while preserving the complete UI implementation.
 
 Before production, validate all business copy, inclusions, certifications, contact details, privacy/legal requirements, and connect the contact form to the real CRM/backend.
