@@ -74,6 +74,7 @@ const implementationStatus = {
     'optional CRM forwarding is available via TURNER_CRM_WEBHOOK_URL',
     'budget calculations are available through /api/budget/summary',
     'runtime app configuration is available through /api/config',
+    'fallback model, project-step and FAQ sections render when the original client script is delayed or blocked',
     'diagnostics expose remaining prototype-only pieces through /api/implementation-status',
   ],
   stillPrototype: [
@@ -84,6 +85,15 @@ const implementationStatus = {
   ],
 };
 
+const fallbackModels = [
+  { name: 'Athènes', area: 576, type: 'Chalet', style: 'Contemporain', bedrooms: 1, baths: 1, garage: 'Non', image: 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg', desc: 'Chalet compact et lumineux avec plafond généreux.' },
+  { name: 'Prague', area: 1160, type: 'Plain-pied', style: 'Familial', bedrooms: 2, baths: 1, garage: 'Non', image: 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg', desc: 'Plain-pied équilibré pour une vie simple et lumineuse.' },
+  { name: 'Oslo', area: 980, type: 'Chalet', style: 'Scandinave', bedrooms: 2, baths: 1, garage: 'Non', image: 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg', desc: 'Expression scandinave chaleureuse et durable.' },
+  { name: 'Portofino', area: 1760, type: 'Deux étages', style: 'Contemporain', bedrooms: 3, baths: 2, garage: 'Oui', image: 'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg', desc: 'Présence architecturale forte pour la famille.' },
+  { name: 'Liverpool', area: 1540, type: 'Deux étages', style: 'Familial', bedrooms: 3, baths: 2, garage: 'Oui', image: 'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg', desc: 'Maison avec garage et zones bien séparées.' },
+  { name: 'Turenne', area: 1320, type: 'Plain-pied', style: 'Contemporain', bedrooms: 3, baths: 2, garage: 'Non', image: 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg', desc: 'Plain-pied lumineux avec circulation fluide.' },
+];
+
 function cleanPath(urlPath = '/') {
   return decodeURIComponent(urlPath.split('?')[0]).replace(/^\/+/, '');
 }
@@ -93,13 +103,13 @@ function safePath(urlPath) {
   return normalized.startsWith('..') ? null : join(root, normalized);
 }
 
-function escapeHtmlAttr(value) {
-  return String(value)
+function escapeHtml(value) {
+  return String(value ?? '')
     .replaceAll('&', '&amp;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;')
     .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function hashForLog(value) {
@@ -263,24 +273,12 @@ function calculateBudget(input = {}) {
   const total = subtotal + contingencyAmount;
   const budgetTarget = money(input.budgetTarget ?? input.budget ?? input['budget cible']);
   const gap = budgetTarget ? budgetTarget - total : 0;
-  return {
-    lineItems,
-    contingencyPct,
-    subtotal,
-    contingencyAmount,
-    total,
-    budgetTarget,
-    gap,
-    currency: 'CAD',
-    disclaimer: 'Simulation informative seulement; ce résultat ne constitue pas une soumission officielle.',
-  };
+  return { lineItems, contingencyPct, subtotal, contingencyAmount, total, budgetTarget, gap, currency: 'CAD', disclaimer: 'Simulation informative seulement; ce résultat ne constitue pas une soumission officielle.' };
 }
 
 async function handleProjectIntake(req, res) {
   if (req.method === 'GET') {
-    if (!adminToken || req.headers.authorization !== `Bearer ${adminToken}`) {
-      return sendJson(res, 403, { ok: false, error: 'Admin token required.' });
-    }
+    if (!adminToken || req.headers.authorization !== `Bearer ${adminToken}`) return sendJson(res, 403, { ok: false, error: 'Admin token required.' });
     try {
       const text = await readFile(intakeFile, 'utf8');
       const records = text.trim().split('\n').filter(Boolean).slice(-50).map(line => JSON.parse(line));
@@ -302,22 +300,12 @@ async function handleProjectIntake(req, res) {
     receivedAt: new Date().toISOString(),
     intake,
     budget: payload.budget ? calculateBudget(payload.budget) : null,
-    meta: {
-      ipHash: hashForLog(clientIp(req)),
-      userAgent: normalizeString(req.headers['user-agent'], 240),
-      referer: normalizeString(req.headers.referer, 300),
-    },
+    meta: { ipHash: hashForLog(clientIp(req)), userAgent: normalizeString(req.headers['user-agent'], 240), referer: normalizeString(req.headers.referer, 300) },
   };
 
   await persistIntake(record);
   const crm = await maybeForwardIntake(record);
-  return sendJson(res, 201, {
-    ok: true,
-    id: record.id,
-    receivedAt: record.receivedAt,
-    crm,
-    message: 'Demande préparée. Elle est sauvegardée localement sur le serveur Turner.',
-  });
+  return sendJson(res, 201, { ok: true, id: record.id, receivedAt: record.receivedAt, crm, message: 'Demande préparée. Elle est sauvegardée localement sur le serveur Turner.' });
 }
 
 async function handleBudgetSummary(req, res) {
@@ -330,30 +318,25 @@ function apiConfig() {
   return {
     ok: true,
     brand: 'Maisons S. Turner',
-    contact: {
-      phone: '819 377-0570',
-      tollFree: '1 800 567-9969',
-      email: 'info@maisonsturner.ca',
-      address: '1021, rue des Ateliers, Trois-Rivières, Québec',
-    },
-    capabilities: {
-      projectIntake: true,
-      localPersistence: true,
-      crmWebhook: Boolean(crmWebhookUrl),
-      budgetSummaryApi: true,
-      adminListing: Boolean(adminToken),
-    },
-    baseline: visualBaseline,
+    contact: { phone: '819 377-0570', tollFree: '1 800 567-9969', email: 'info@maisonsturner.ca', address: '1021, rue des Ateliers, Trois-Rivières, Québec' },
+    capabilities: { projectIntake: true, localPersistence: true, crmWebhook: Boolean(crmWebhookUrl), budgetSummaryApi: true, adminListing: Boolean(adminToken), runtimeFallbacks: true },
   };
-}
-
-function sendJson(res, status, payload) {
-  return send(res, status, JSON.stringify(payload, null, 2), mime['.json']);
 }
 
 async function gunzipText(relativePath) {
   const bytes = await readFile(join(root, relativePath));
   return (await gunzipAsync(bytes)).toString('utf8');
+}
+
+function patchVisualUrls(source) {
+  let out = source;
+  for (const [local, remote] of visualSourceMap) out = out.replaceAll(local, remote);
+  return out;
+}
+
+function baselineHeadMarkup() {
+  const baselineJson = JSON.stringify({ ...visualBaseline, preloadVisuals }).replaceAll('</script', '<\\/script');
+  return `\n<meta name="turner-baseline" content="${escapeHtml(`${visualBaseline.mode}/${visualBaseline.payload}`)}">\n<link rel="preconnect" href="https://maisonsturner.ca" crossorigin>\n<link rel="dns-prefetch" href="//maisonsturner.ca">\n<link rel="preload" as="image" href="${escapeHtml(preloadVisuals[0])}" fetchpriority="high">\n<script>window.__TURNER_BASELINE__=${baselineJson};</script>`;
 }
 
 function enhanceCompare(html) {
@@ -362,116 +345,112 @@ function enhanceCompare(html) {
       '<button class="button button-primary" type="button" id="open-compare">Comparer</button>',
       '<div class="compare-actions"><button class="button button-primary" type="button" id="open-compare">Comparer</button><button class="compare-mini-button" type="button" id="hide-compare">Masquer</button><button class="compare-mini-button" type="button" id="clear-compare">Vider</button></div>'
     );
-    html = html.replace(
-      '</aside>\n\n    <section class="transparency',
-      '</aside>\n    <button class="compare-return" type="button" id="show-compare" hidden>Afficher comparaison</button>\n\n    <section class="transparency'
-    );
+    html = html.replace('</aside>\n\n    <section class="transparency', '</aside>\n    <button class="compare-return" type="button" id="show-compare" hidden>Afficher comparaison</button>\n\n    <section class="transparency');
   }
   return html;
 }
 
-function patchVisualUrls(source) {
-  let out = source;
-  for (const [local, remote] of visualSourceMap) {
-    out = out.replaceAll(local, remote);
-  }
-  return out;
-}
-
-function baselineHeadMarkup() {
-  const baselineJson = JSON.stringify({ ...visualBaseline, preloadVisuals }).replaceAll('</script', '<\\/script');
-  return `
-<meta name="turner-baseline" content="${escapeHtmlAttr(`${visualBaseline.mode}/${visualBaseline.payload}`)}">
-<link rel="preconnect" href="https://maisonsturner.ca" crossorigin>
-<link rel="dns-prefetch" href="//maisonsturner.ca">
-<link rel="preload" as="image" href="${escapeHtmlAttr(preloadVisuals[0])}" fetchpriority="high">
-<script>window.__TURNER_BASELINE__=${baselineJson};</script>`;
-}
-
 const compareCss = `
-.compare-actions{display:flex;align-items:center;gap:8px}.compare-actions .button{min-height:42px;padding-inline:18px}
-.compare-mini-button,.compare-return{min-height:42px;padding:0 13px;color:var(--white);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:7px;cursor:pointer;font-size:.72rem;font-weight:800}
-.compare-mini-button:hover,.compare-return:hover{background:rgba(255,255,255,.14)}
-.compare-return{position:fixed;z-index:250;right:max(18px,calc((100vw - var(--shell))/2));bottom:18px;color:var(--white);background:var(--navy);box-shadow:var(--shadow-md)}
-.compare-return[hidden]{display:none}@media(max-width:980px){.compare-actions{grid-column:1/-1}.compare-actions>*{flex:1}}@media(max-width:720px){.compare-return{right:10px;bottom:10px;left:10px;width:auto}}
+.compare-actions{display:flex;align-items:center;gap:8px}.compare-actions .button{min-height:42px;padding-inline:18px}.compare-mini-button,.compare-return{min-height:42px;padding:0 13px;color:var(--white);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:7px;cursor:pointer;font-size:.72rem;font-weight:800}.compare-mini-button:hover,.compare-return:hover{background:rgba(255,255,255,.14)}.compare-return{position:fixed;z-index:250;right:max(18px,calc((100vw - var(--shell))/2));bottom:18px;color:var(--white);background:var(--navy);box-shadow:var(--shadow-md)}.compare-return[hidden]{display:none}@media(max-width:980px){.compare-actions{grid-column:1/-1}.compare-actions>*{flex:1}}@media(max-width:720px){.compare-return{right:10px;bottom:10px;left:10px;width:auto}}
 `;
 
-const baselinePolishCss = `
-/* Baseline-safe polish only: preserve the restored rich layout and avoid global redesign. */
-html{scroll-behavior:smooth}body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.hero h1,.title,.section-title,.display{text-wrap:balance}img{image-rendering:auto}.collection-card,.collection-card-tall,.model-card,.card,.compare-tray{transform:translateZ(0)}body.turner-compare-visible{padding-bottom:96px}.compare-return{backdrop-filter:blur(12px)}.turner-form-status{margin-top:12px;font-weight:800;color:var(--navy,#0b2332)}.turner-form-status[data-state="error"]{color:#9d2f1f}@media(max-width:720px){body.turner-compare-visible{padding-bottom:128px}.collection-card,.collection-card-tall{min-height:clamp(260px,68vw,360px)}.model-card img,.collection-card img{width:100%;height:100%;object-fit:cover}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+const fallbackCss = `
+/* Completion layer: only fills missing original-runtime sections. */
+.turner-fallback-models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:18px 0 40px}.turner-fallback-card{background:var(--white,#fff);border:1px solid var(--border,#eadfd4);border-radius:18px;overflow:hidden;box-shadow:0 14px 36px rgba(9,31,44,.09)}.turner-fallback-card img{width:100%;height:190px;object-fit:cover}.turner-fallback-card-body{padding:16px}.turner-fallback-card h3{font-family:var(--display-font, Georgia, serif);font-size:1.7rem;margin:.2rem 0}.turner-fallback-card p{color:var(--muted,#64707a);margin:.25rem 0 .8rem}.turner-fallback-tag{display:inline-flex;margin-top:-38px;margin-left:12px;position:relative;z-index:1;background:rgba(9,31,44,.88);color:white;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:800}.turner-fallback-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.turner-fallback-specs span{background:var(--cream,#f6f1ea);border-radius:10px;padding:9px;text-align:center;font-size:.78rem}.turner-fallback-actions{display:flex;gap:8px}.turner-fallback-actions button{min-height:36px;border:1px solid var(--copper,#bd6740);border-radius:8px;background:white;color:var(--copper,#bd6740);font-weight:800;padding:0 13px}.turner-fallback-panel,.turner-fallback-faq{border:1px solid var(--border,#eadfd4);border-radius:16px;background:white;padding:22px;margin-top:14px}.turner-fallback-panel h3{font-family:var(--display-font, Georgia, serif);font-size:2rem;margin:.2rem 0}.turner-fallback-panel ul{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}.turner-fallback-panel li{background:var(--cream,#f6f1ea);border-radius:10px;padding:10px}.turner-fallback-faq details{border:1px solid var(--border,#eadfd4);border-radius:12px;background:white;margin:10px 0;overflow:hidden}.turner-fallback-faq summary{cursor:pointer;font-weight:900;padding:15px 16px}.turner-fallback-faq p{padding:0 16px 16px;margin:0;color:var(--muted,#64707a);line-height:1.5}.turner-toast{position:fixed;z-index:500;left:16px;right:16px;bottom:16px;background:#071b27;color:white;border-radius:12px;padding:13px 16px;text-align:center;box-shadow:0 16px 44px rgba(0,0,0,.24)}html{scroll-behavior:smooth}body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.hero h1,.title,.section-title,.display{text-wrap:balance}body.turner-compare-visible{padding-bottom:96px}@media(max-width:720px){.turner-fallback-models{grid-template-columns:1fr}.turner-fallback-card img{height:210px}body.turner-compare-visible{padding-bottom:128px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 `;
 
-const compareJs = `(() => {
-  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-  const count=()=>$$('.compare-chip').length || $$('[data-compare-id][aria-pressed="true"]').length;
-  const sync=()=>{const t=$('#compare-tray'),b=$('#show-compare');const visible=!!(t&&!t.hidden);document.body.classList.toggle('turner-compare-visible',visible);if(b)b.textContent='Afficher comparaison'+(count()?' ('+count()+')':'');};
-  const observe=()=>{const t=$('#compare-tray');if(t)new MutationObserver(sync).observe(t,{attributes:true,attributeFilter:['hidden']});sync();};
-  document.addEventListener('click',e=>{
-    if(e.target.closest('#hide-compare')){const t=$('#compare-tray'),b=$('#show-compare');if(t&&b){t.hidden=true;sync();b.hidden=false;}}
-    if(e.target.closest('#show-compare')){const t=$('#compare-tray'),b=$('#show-compare');if(t&&b){t.hidden=false;b.hidden=true;sync();}}
-    if(e.target.closest('#clear-compare')){const buttons=$$('[data-remove-compare]');if(buttons.length)buttons.forEach(b=>b.click());else $$('[data-compare-id][aria-pressed="true"]').forEach(b=>b.click());const t=$('#compare-tray'),s=$('#show-compare');if(t)t.hidden=true;if(s)s.hidden=true;}
-    queueMicrotask(sync);
-  });
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe,{once:true});else observe();
-})();`;
-
-const productionBridgeJs = `(() => {
-  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-  const labelFor=(el)=> {
-    const id=el.getAttribute('id');
-    if(id){const explicit=document.querySelector('label[for="'+CSS.escape(id)+'"]');if(explicit)return explicit.textContent.trim();}
-    const wrapped=el.closest('label'); if(wrapped)return wrapped.textContent.trim();
-    const field=el.closest('.field,.form-field,.input,.control,div'); const label=field&&field.querySelector('label');
-    return (label&&label.textContent.trim()) || el.getAttribute('aria-label') || el.getAttribute('placeholder') || el.name || el.id || el.type || 'field';
-  };
-  const keyFor=(el)=> (el.name||el.id||labelFor(el)).trim();
-  const valueFor=(el)=> el.type==='checkbox' ? el.checked : el.value;
-  const hasContactIntent=(form)=> {
-    const text=(form.textContent||'') + ' ' + form.action;
-    return /Préparer ma demande|Parlez-nous du projet|NOM COMPLET|COURRIEL|RENSEIGNEMENTS|contact/i.test(text) && !!form.querySelector('textarea');
-  };
-  const statusFor=(form)=> {
-    let status=form.querySelector('.turner-form-status');
-    if(!status){status=document.createElement('p');status.className='turner-form-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');form.appendChild(status);}
-    return status;
-  };
-  const payloadFrom=(form)=> {
-    const fields={};
-    for(const el of $$('input,select,textarea',form)){
-      if(!el.type || ['submit','button','reset','file'].includes(el.type)) continue;
-      fields[keyFor(el)] = valueFor(el);
+function completionJs() {
+  const modelsJson = JSON.stringify(fallbackModels).replaceAll('</script', '<\\/script');
+  return `(() => {
+    const models = ${modelsJson};
+    const $ = (s, r=document) => r.querySelector(s);
+    const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+    const text = n => (n?.textContent || '').replace(/\s+/g, ' ').trim();
+    const sectionContaining = (...needles) => $$('section, main > div, main').find(node => needles.every(n => text(node).toLowerCase().includes(n.toLowerCase())));
+    const toast = msg => { const n=document.createElement('div'); n.className='turner-toast'; n.textContent=msg; document.body.appendChild(n); setTimeout(()=>n.remove(), 5200); };
+    function existingRealCards(section) {
+      if (!section) return 0;
+      return $$('article, .model-card, [data-model-id]', section).filter(n => !n.closest('[data-turner-fallback-models]')).length;
     }
-    return { source:'maisons-turner-web-app', fields };
-  };
-  document.addEventListener('submit', async event => {
-    const form=event.target;
-    if(!(form instanceof HTMLFormElement) || !hasContactIntent(form)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const status=statusFor(form);
-    const button=form.querySelector('button[type="submit"],button:not([type])');
-    const original=button&&button.textContent;
-    if(button){button.disabled=true;button.textContent='Préparation…';}
-    status.dataset.state='loading';
-    status.textContent='Préparation de la demande…';
-    try {
-      const response=await fetch('/api/project-intake',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payloadFrom(form))});
-      const result=await response.json().catch(()=>({ok:false,error:'Réponse invalide du serveur'}));
-      if(!response.ok || !result.ok){
-        const message=(result.errors&&result.errors.map(e=>e.message).join(' ')) || result.error || 'Impossible de préparer la demande.';
-        throw new Error(message);
-      }
-      status.dataset.state='success';
-      status.textContent='Demande préparée #' + result.id + '. Elle est sauvegardée localement sur le serveur.';
-      form.dataset.turnerSubmissionId=result.id;
-    } catch (error) {
-      status.dataset.state='error';
-      status.textContent=error.message || 'Impossible de préparer la demande.';
-    } finally {
-      if(button){button.disabled=false;button.textContent=original||'Préparer ma demande →';}
+    function ensureModelFallback() {
+      const section = sectionContaining('6 modèles') || $('#modeles');
+      if (!section || section.querySelector('[data-turner-fallback-models]') || existingRealCards(section) >= 3) return;
+      const grid = document.createElement('div');
+      grid.className = 'turner-fallback-models';
+      grid.dataset.turnerFallbackModels = 'true';
+      grid.innerHTML = models.map(m => '<article class="turner-fallback-card"><img src="'+m.image+'" alt="Modèle '+m.name+'" loading="lazy"><span class="turner-fallback-tag">'+m.type+' · '+m.style+'</span><div class="turner-fallback-card-body"><div style="display:flex;justify-content:space-between;gap:12px"><h3>'+m.name+'</h3><strong>'+m.area+' pi²</strong></div><p>'+m.desc+'</p><div class="turner-fallback-specs"><span><b>'+m.bedrooms+'</b><br>Ch.</span><span><b>'+m.baths+'</b><br>S.B.</span><span><b>'+m.garage+'</b><br>Garage</span></div><div class="turner-fallback-actions"><button type="button">Voir</button><button type="button" data-turner-fallback-compare="'+m.name+'">Comparer</button></div></div></article>').join('');
+      const marker = $$('h1,h2,h3,p,div', section).find(n => /réinitialiser les filtres/i.test(text(n))) || section;
+      if (marker === section) section.appendChild(grid); else marker.insertAdjacentElement('afterend', grid);
     }
-  }, true);
-})();`;
+    function ensureProjectFallback() {
+      const section = sectionContaining('de votre terrain', 'terrain et budget');
+      if (!section || /comprendre le terrain/i.test(text(section)) || section.querySelector('[data-turner-fallback-project]')) return;
+      const panel = document.createElement('div');
+      panel.className = 'turner-fallback-panel';
+      panel.dataset.turnerFallbackProject = 'true';
+      panel.innerHTML = '<small>ÉTAPE 01</small><h3>Comprendre le terrain, les besoins et la capacité budgétaire.</h3><ul><li>Rassembler les informations du terrain</li><li>Définir chambres, étages et sous-sol</li><li>Identifier les travaux faits par le client</li><li>Sélectionner un plan de départ</li></ul>';
+      section.appendChild(panel);
+    }
+    function ensureFaqFallback() {
+      const section = sectionContaining('questions utiles', 'premier rendez-vous') || sectionContaining('les réponses', 'rendez-vous');
+      if (!section || /livrez-vous partout/i.test(text(section)) || section.querySelector('[data-turner-fallback-faq]')) return;
+      const faq = document.createElement('div');
+      faq.className = 'turner-fallback-faq';
+      faq.dataset.turnerFallbackFaq = 'true';
+      faq.innerHTML = '<details open><summary>01 Livrez-vous partout au Québec?</summary><p>Oui. La faisabilité et les coûts se valident selon l’emplacement et l’accès au terrain.</p></details><details><summary>02 Puis-je modifier un plan existant?</summary><p>Oui. Les modèles servent de point de départ; les adaptations se valident avec l’équipe Turner.</p></details><details><summary>03 Le planificateur donne-t-il un vrai prix?</summary><p>Non. Il prépare une discussion budgétaire, sans remplacer une soumission officielle.</p></details><details><summary>04 Qu’est-ce qui réduit les surprises?</summary><p>Des inclusions visibles, des responsabilités séparées et des étapes de projet expliquées avant l’engagement.</p></details>';
+      section.appendChild(faq);
+    }
+    function compareSync() {
+      const tray = $('#compare-tray');
+      const show = $('#show-compare');
+      const count = $$('.compare-chip').length || $$('[data-compare-id][aria-pressed="true"]').length;
+      const visible = !!(tray && !tray.hidden);
+      document.body.classList.toggle('turner-compare-visible', visible);
+      if (show) show.textContent = 'Afficher comparaison' + (count ? ' (' + count + ')' : '');
+    }
+    function collectForm(form) {
+      const fields = {};
+      $$('input, select, textarea', form).forEach((field, index) => {
+        if (field.type === 'submit' || field.type === 'button') return;
+        const label = field.name || field.id || field.getAttribute('aria-label') || field.placeholder || field.closest('label')?.textContent || field.previousElementSibling?.textContent || 'field_' + index;
+        fields[label] = field.type === 'checkbox' ? field.checked : field.value;
+      });
+      return fields;
+    }
+    function wireForms() {
+      $$('form').forEach(form => {
+        if (form.dataset.turnerApiWired || !/nom|courriel|parlez|projet|code postal|téléphone|telephone/i.test(text(form))) return;
+        form.dataset.turnerApiWired = 'true';
+        form.addEventListener('submit', async event => {
+          event.preventDefault();
+          const button = form.querySelector('button[type="submit"], button:not([type]), input[type="submit"]');
+          const previous = button?.textContent;
+          if (button) { button.disabled = true; button.textContent = 'Préparation…'; }
+          try {
+            const response = await fetch('/api/project-intake', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fields: collectForm(form), source: 'contact-form' }) });
+            const result = await response.json();
+            if (!response.ok || !result.ok) throw new Error((result.errors || []).map(e => e.message).join(' ') || result.error || 'Demande refusée');
+            toast(result.message || 'Demande sauvegardée.');
+            form.dataset.lastIntakeId = result.id;
+          } catch (error) {
+            toast(error.message || 'Impossible de préparer la demande.');
+          } finally {
+            if (button) { button.disabled = false; button.textContent = previous || 'Préparer ma demande →'; }
+          }
+        });
+      });
+    }
+    function run() { ensureModelFallback(); ensureProjectFallback(); ensureFaqFallback(); wireForms(); compareSync(); }
+    document.addEventListener('click', event => {
+      if (event.target.closest('#hide-compare')) { const tray=$('#compare-tray'), show=$('#show-compare'); if (tray && show) { tray.hidden=true; show.hidden=false; compareSync(); } }
+      if (event.target.closest('#show-compare')) { const tray=$('#compare-tray'), show=$('#show-compare'); if (tray && show) { tray.hidden=false; show.hidden=true; compareSync(); } }
+      if (event.target.closest('#clear-compare')) { $$('[data-remove-compare]').forEach(button => button.click()); $$('[data-compare-id][aria-pressed="true"]').forEach(button => button.click()); const tray=$('#compare-tray'), show=$('#show-compare'); if (tray) tray.hidden=true; if (show) show.hidden=true; compareSync(); }
+      queueMicrotask(run);
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true }); else run();
+    setTimeout(run, 120); setTimeout(run, 800); setTimeout(run, 1800);
+  })();`;
+}
 
 async function renderApp() {
   const [rawHtml, rawCss, rawJs] = await Promise.all([
@@ -483,14 +462,19 @@ async function renderApp() {
   html = enhanceCompare(patchVisualUrls(html));
   const css = patchVisualUrls(rawCss);
   const safeJs = patchVisualUrls(rawJs).replaceAll('</script>', '<\\/script>');
+  const completeJs = completionJs().replaceAll('</script>', '<\\/script>');
   return html
-    .replace('</head>', `${baselineHeadMarkup()}\n<style>${css}\n${compareCss}\n${baselinePolishCss}</style></head>`)
-    .replace('</body>', `<script>${safeJs}</script><script>${compareJs}</script><script>${productionBridgeJs}</script></body>`);
+    .replace('</head>', `${baselineHeadMarkup()}\n<style>${css}\n${compareCss}\n${fallbackCss}</style></head>`)
+    .replace('</body>', `<script>${safeJs}</script><script>${completeJs}</script></body>`);
 }
 
 function send(res, status, body, type = 'text/plain; charset=utf-8', cache = 'no-store, max-age=0') {
   res.writeHead(status, { 'Content-Type': type, 'Cache-Control': cache });
   res.end(body);
+}
+
+function sendJson(res, status, payload) {
+  send(res, status, JSON.stringify(payload, null, 2), mime['.json']);
 }
 
 async function health() {
@@ -502,30 +486,10 @@ async function health() {
   return {
     ok: true,
     ...visualBaseline,
-    visuals: {
-      sourceMapEntries: visualSourceMap.size,
-      highResolutionTurnerSources: true,
-      preloadCount: preloadVisuals.length,
-      preloadedHero: preloadVisuals[0],
-    },
-    implementation: implementationStatus,
-    runtime: {
-      projectIntakeApi: true,
-      budgetSummaryApi: true,
-      localPersistence: true,
-      adminListing: Boolean(adminToken),
-      crmWebhook: Boolean(crmWebhookUrl),
-    },
-    polish: {
-      baselineMetaInjected: true,
-      compareBodyOffset: true,
-      reducedMotionSafe: true,
-    },
-    decoded: {
-      html: html.length,
-      css: css.length,
-      js: js.length,
-    },
+    visuals: { sourceMapEntries: visualSourceMap.size, highResolutionTurnerSources: true, preloadCount: preloadVisuals.length, preloadedHero: preloadVisuals[0] },
+    implementations: implementationStatus,
+    completionLayer: { modelFallbacks: fallbackModels.length, projectFallback: true, faqFallback: true, contactApiBridge: true },
+    decoded: { html: html.length, css: css.length, js: js.length },
     pid: process.pid,
     host,
     port,
@@ -540,34 +504,22 @@ const server = http.createServer(async (req, res) => {
     if (route === '__visuals') return sendJson(res, 200, { sourceMap: [...visualSourceMap.entries()], preloadVisuals });
     if (route === 'api/config') return sendJson(res, 200, apiConfig());
     if (route === 'api/implementation-status') return sendJson(res, 200, { ok: true, ...implementationStatus });
-    if (route === 'api/project-intake') return handleProjectIntake(req, res);
     if (route === 'api/budget/summary') return handleBudgetSummary(req, res);
+    if (route === 'api/project-intake') return handleProjectIntake(req, res);
     if (route === '' || route === 'index.html') return send(res, 200, await renderApp(), mime['.html']);
 
     const filePath = safePath(req.url || '/');
     if (!filePath) return send(res, 400, 'Bad path');
-
     try {
       if ((await stat(filePath)).isDirectory()) return send(res, 200, await renderApp(), mime['.html']);
     } catch {
       return send(res, 404, 'Not found');
     }
-
     const ext = extname(filePath).toLowerCase();
     const body = await readFile(filePath);
-    send(
-      res,
-      200,
-      body,
-      mime[ext] || 'application/octet-stream',
-      noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=3600'
-    );
+    send(res, 200, body, mime[ext] || 'application/octet-stream', noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=3600');
   } catch (error) {
-    const status = Number(error.status || 500);
-    if (cleanPath(req.url || '').startsWith('api/')) {
-      return sendJson(res, status, { ok: false, error: error.message });
-    }
-    send(res, status, `Server error: ${error.message}`);
+    sendJson(res, error.status || 500, { ok: false, error: error.message || 'Server error' });
   }
 });
 
