@@ -40,6 +40,13 @@ const visualSourceMap = new Map([
   ['./public/images/oslo-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
 ]);
 
+const preloadVisuals = [
+  'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg',
+  'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg',
+  'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg',
+  'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg',
+];
+
 const visualBaseline = {
   mode: 'restored-rich-layout',
   payload: 'original-b371',
@@ -60,6 +67,15 @@ function cleanPath(urlPath = '/') {
 function safePath(urlPath) {
   const normalized = normalize(cleanPath(urlPath) || 'index.html');
   return normalized.startsWith('..') ? null : join(root, normalized);
+}
+
+function escapeHtmlAttr(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 }
 
 async function gunzipText(relativePath) {
@@ -89,6 +105,16 @@ function patchVisualUrls(source) {
   return out;
 }
 
+function baselineHeadMarkup() {
+  const baselineJson = JSON.stringify({ ...visualBaseline, preloadVisuals }).replaceAll('</script', '<\\/script');
+  return `
+<meta name="turner-baseline" content="${escapeHtmlAttr(`${visualBaseline.mode}/${visualBaseline.payload}`)}">
+<link rel="preconnect" href="https://maisonsturner.ca" crossorigin>
+<link rel="dns-prefetch" href="//maisonsturner.ca">
+<link rel="preload" as="image" href="${escapeHtmlAttr(preloadVisuals[0])}" fetchpriority="high">
+<script>window.__TURNER_BASELINE__=${baselineJson};</script>`;
+}
+
 const compareCss = `
 .compare-actions{display:flex;align-items:center;gap:8px}.compare-actions .button{min-height:42px;padding-inline:18px}
 .compare-mini-button,.compare-return{min-height:42px;padding:0 13px;color:var(--white);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:7px;cursor:pointer;font-size:.72rem;font-weight:800}
@@ -97,16 +123,23 @@ const compareCss = `
 .compare-return[hidden]{display:none}@media(max-width:980px){.compare-actions{grid-column:1/-1}.compare-actions>*{flex:1}}@media(max-width:720px){.compare-return{right:10px;bottom:10px;left:10px;width:auto}}
 `;
 
+const baselinePolishCss = `
+/* Baseline-safe polish only: preserve the restored rich layout and avoid global redesign. */
+html{scroll-behavior:smooth}body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.hero h1,.title,.section-title,.display{text-wrap:balance}img{image-rendering:auto}.collection-card,.collection-card-tall,.model-card,.card,.compare-tray{transform:translateZ(0)}body.turner-compare-visible{padding-bottom:96px}.compare-return{backdrop-filter:blur(12px)}@media(max-width:720px){body.turner-compare-visible{padding-bottom:128px}.collection-card,.collection-card-tall{min-height:clamp(260px,68vw,360px)}.model-card img,.collection-card img{width:100%;height:100%;object-fit:cover}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+`;
+
 const compareJs = `(() => {
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const count=()=>$$('.compare-chip').length || $$('[data-compare-id][aria-pressed="true"]').length;
-  const label=()=>{const b=$('#show-compare');if(b)b.textContent='Afficher comparaison'+(count()?' ('+count()+')':'');};
+  const sync=()=>{const t=$('#compare-tray'),b=$('#show-compare');const visible=!!(t&&!t.hidden);document.body.classList.toggle('turner-compare-visible',visible);if(b)b.textContent='Afficher comparaison'+(count()?' ('+count()+')':'');};
+  const observe=()=>{const t=$('#compare-tray');if(t)new MutationObserver(sync).observe(t,{attributes:true,attributeFilter:['hidden']});sync();};
   document.addEventListener('click',e=>{
-    if(e.target.closest('#hide-compare')){const t=$('#compare-tray'),b=$('#show-compare');if(t&&b){t.hidden=true;label();b.hidden=false;}}
-    if(e.target.closest('#show-compare')){const t=$('#compare-tray'),b=$('#show-compare');if(t&&b){t.hidden=false;b.hidden=true;}}
+    if(e.target.closest('#hide-compare')){const t=$('#compare-tray'),b=$('#show-compare');if(t&&b){t.hidden=true;sync();b.hidden=false;}}
+    if(e.target.closest('#show-compare')){const t=$('#compare-tray'),b=$('#show-compare');if(t&&b){t.hidden=false;b.hidden=true;sync();}}
     if(e.target.closest('#clear-compare')){const buttons=$$('[data-remove-compare]');if(buttons.length)buttons.forEach(b=>b.click());else $$('[data-compare-id][aria-pressed="true"]').forEach(b=>b.click());const t=$('#compare-tray'),s=$('#show-compare');if(t)t.hidden=true;if(s)s.hidden=true;}
-    queueMicrotask(label);
+    queueMicrotask(sync);
   });
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe,{once:true});else observe();
 })();`;
 
 async function renderApp() {
@@ -120,7 +153,7 @@ async function renderApp() {
   const css = patchVisualUrls(rawCss);
   const safeJs = patchVisualUrls(rawJs).replaceAll('</script>', '<\\/script>');
   return html
-    .replace('</head>', `<style>${css}\n${compareCss}</style></head>`)
+    .replace('</head>', `${baselineHeadMarkup()}\n<style>${css}\n${compareCss}\n${baselinePolishCss}</style></head>`)
     .replace('</body>', `<script>${safeJs}</script><script>${compareJs}</script></body>`);
 }
 
@@ -141,6 +174,13 @@ async function health() {
     visuals: {
       sourceMapEntries: visualSourceMap.size,
       highResolutionTurnerSources: true,
+      preloadCount: preloadVisuals.length,
+      preloadedHero: preloadVisuals[0],
+    },
+    polish: {
+      baselineMetaInjected: true,
+      compareBodyOffset: true,
+      reducedMotionSafe: true,
     },
     decoded: {
       html: html.length,
@@ -158,6 +198,7 @@ const server = http.createServer(async (req, res) => {
     const route = cleanPath(req.url || '/');
     if (route === '__health') return send(res, 200, JSON.stringify(await health(), null, 2), mime['.json']);
     if (route === '__baseline') return send(res, 200, JSON.stringify(visualBaseline, null, 2), mime['.json']);
+    if (route === '__visuals') return send(res, 200, JSON.stringify({ sourceMap: [...visualSourceMap.entries()], preloadVisuals }, null, 2), mime['.json']);
     if (route === '' || route === 'index.html') return send(res, 200, await renderApp(), mime['.html']);
 
     const filePath = safePath(req.url || '/');
