@@ -11,29 +11,62 @@ const host = process.env.HOST || '127.0.0.1';
 const gunzipAsync = promisify(gunzip);
 
 const mime = {
-  '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp', '.avif': 'image/avif', '.svg': 'image/svg+xml', '.gz': 'application/octet-stream'
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.avif': 'image/avif',
+  '.svg': 'image/svg+xml',
+  '.gz': 'application/octet-stream',
 };
 
-const remoteVisuals = new Map([
+const noStoreExts = new Set(['.html', '.js', '.json', '.gz']);
+
+const visualSourceMap = new Map([
   ['./public/images/hero-turner.webp', 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg'],
+  ['./public/images/hero-turner.avif', 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg'],
   ['./public/images/collection-chalet.webp', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
+  ['./public/images/collection-chalet.avif', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
   ['./public/images/collection-plain-pied.webp', 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg'],
+  ['./public/images/collection-plain-pied.avif', 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg'],
   ['./public/images/collection-two-storey.webp', 'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg'],
+  ['./public/images/collection-two-storey.avif', 'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg'],
+  ['./public/images/athenes-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg'],
+  ['./public/images/prague-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg'],
+  ['./public/images/oslo-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
 ]);
+
+const visualBaseline = {
+  mode: 'restored-rich-layout',
+  payload: 'original-b371',
+  rule: 'Do not rebuild the stripped standalone layout. Preserve original responsive rhythm, logo proportion, typography scale, and section hierarchy.',
+  acceptance: [
+    'Hero keeps the earlier rich composition and Turner modular wordmark, not the stripped rebuild.',
+    'Large hero and collection imagery use high-resolution Turner image URLs or approved equivalents.',
+    'Catalogue cards, project-step details, FAQ, planner, and contact form render on mobile before interaction.',
+    'Comparison tray can be hidden and cleared without covering planner/contact sections.',
+    'Future edits are local repairs only unless a new visual direction is explicitly approved.',
+  ],
+};
 
 function cleanPath(urlPath = '/') {
   return decodeURIComponent(urlPath.split('?')[0]).replace(/^\/+/, '');
 }
+
 function safePath(urlPath) {
   const normalized = normalize(cleanPath(urlPath) || 'index.html');
   return normalized.startsWith('..') ? null : join(root, normalized);
 }
+
 async function gunzipText(relativePath) {
   const bytes = await readFile(join(root, relativePath));
   return (await gunzipAsync(bytes)).toString('utf8');
 }
+
 function enhanceCompare(html) {
   if (!html.includes('id="hide-compare"')) {
     html = html.replace(
@@ -47,9 +80,13 @@ function enhanceCompare(html) {
   }
   return html;
 }
-function patchVisualUrls(html) {
-  for (const [local, remote] of remoteVisuals) html = html.replaceAll(local, remote);
-  return html;
+
+function patchVisualUrls(source) {
+  let out = source;
+  for (const [local, remote] of visualSourceMap) {
+    out = out.replaceAll(local, remote);
+  }
+  return out;
 }
 
 const compareCss = `
@@ -59,6 +96,7 @@ const compareCss = `
 .compare-return{position:fixed;z-index:250;right:max(18px,calc((100vw - var(--shell))/2));bottom:18px;color:var(--white);background:var(--navy);box-shadow:var(--shadow-md)}
 .compare-return[hidden]{display:none}@media(max-width:980px){.compare-actions{grid-column:1/-1}.compare-actions>*{flex:1}}@media(max-width:720px){.compare-return{right:10px;bottom:10px;left:10px;width:auto}}
 `;
+
 const compareJs = `(() => {
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const count=()=>$$('.compare-chip').length || $$('[data-compare-id][aria-pressed="true"]').length;
@@ -72,34 +110,85 @@ const compareJs = `(() => {
 })();`;
 
 async function renderApp() {
-  const [rawHtml, css, js] = await Promise.all([
-    gunzipText('payload/index.html.gz'), gunzipText('payload/styles.css.gz'), gunzipText('payload/app.js.gz')
+  const [rawHtml, rawCss, rawJs] = await Promise.all([
+    gunzipText('payload/index.html.gz'),
+    gunzipText('payload/styles.css.gz'),
+    gunzipText('payload/app.js.gz'),
   ]);
   let html = rawHtml.replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, '');
   html = enhanceCompare(patchVisualUrls(html));
-  const safeJs = js.replaceAll('</script>', '<\\/script>');
-  return html.replace('</head>', `<style>${css}\n${compareCss}</style></head>`)
+  const css = patchVisualUrls(rawCss);
+  const safeJs = patchVisualUrls(rawJs).replaceAll('</script>', '<\\/script>');
+  return html
+    .replace('</head>', `<style>${css}\n${compareCss}</style></head>`)
     .replace('</body>', `<script>${safeJs}</script><script>${compareJs}</script></body>`);
 }
-function send(res, status, body, type='text/plain; charset=utf-8', cache='no-store, max-age=0') {
-  res.writeHead(status, {'Content-Type': type, 'Cache-Control': cache}); res.end(body);
+
+function send(res, status, body, type = 'text/plain; charset=utf-8', cache = 'no-store, max-age=0') {
+  res.writeHead(status, { 'Content-Type': type, 'Cache-Control': cache });
+  res.end(body);
 }
-const server = http.createServer(async (req,res) => {
+
+async function health() {
+  const [html, css, js] = await Promise.all([
+    gunzipText('payload/index.html.gz'),
+    gunzipText('payload/styles.css.gz'),
+    gunzipText('payload/app.js.gz'),
+  ]);
+  return {
+    ok: true,
+    ...visualBaseline,
+    visuals: {
+      sourceMapEntries: visualSourceMap.size,
+      highResolutionTurnerSources: true,
+    },
+    decoded: {
+      html: html.length,
+      css: css.length,
+      js: js.length,
+    },
+    pid: process.pid,
+    host,
+    port,
+  };
+}
+
+const server = http.createServer(async (req, res) => {
   try {
     const route = cleanPath(req.url || '/');
-    if (route === '__health') return send(res,200,JSON.stringify({ok:true,mode:'restored-rich-layout',payload:'original-b371',visuals:'high-res-remote',pid:process.pid,host,port},null,2),mime['.json']);
-    if (route === '' || route === 'index.html') return send(res,200,await renderApp(),mime['.html']);
-    let filePath = safePath(req.url || '/');
-    if (!filePath) return send(res,400,'Bad path');
-    try { if ((await stat(filePath)).isDirectory()) return send(res,200,await renderApp(),mime['.html']); }
-    catch { return send(res,404,'Not found'); }
+    if (route === '__health') return send(res, 200, JSON.stringify(await health(), null, 2), mime['.json']);
+    if (route === '__baseline') return send(res, 200, JSON.stringify(visualBaseline, null, 2), mime['.json']);
+    if (route === '' || route === 'index.html') return send(res, 200, await renderApp(), mime['.html']);
+
+    const filePath = safePath(req.url || '/');
+    if (!filePath) return send(res, 400, 'Bad path');
+
+    try {
+      if ((await stat(filePath)).isDirectory()) return send(res, 200, await renderApp(), mime['.html']);
+    } catch {
+      return send(res, 404, 'Not found');
+    }
+
     const ext = extname(filePath).toLowerCase();
     const body = await readFile(filePath);
-    send(res,200,body,mime[ext] || 'application/octet-stream',['.html','.js','.gz'].includes(ext)?'no-store, max-age=0':'public, max-age=3600');
-  } catch(error) { send(res,500,`Server error: ${error.message}`); }
+    send(
+      res,
+      200,
+      body,
+      mime[ext] || 'application/octet-stream',
+      noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=3600'
+    );
+  } catch (error) {
+    send(res, 500, `Server error: ${error.message}`);
+  }
 });
+
 server.on('error', error => {
-  if(error.code === 'EADDRINUSE') { console.error(`Port ${port} is already in use. Stop the old server with: kill $(lsof -tiTCP:${port} -sTCP:LISTEN)`); process.exit(1); }
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is already in use. Stop the old server with: kill $(lsof -tiTCP:${port} -sTCP:LISTEN)`);
+    process.exit(1);
+  }
   throw error;
 });
-server.listen(port,host,()=>console.log(`Maisons S. Turner app: http://${host}:${port}`));
+
+server.listen(port, host, () => console.log(`Maisons S. Turner app: http://${host}:${port}`));
