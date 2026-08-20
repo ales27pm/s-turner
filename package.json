@@ -3,5 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {"start": "node server.mjs", "check": "node --check bootstrap.js && node --check server.mjs"}
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check bootstrap.js && node --check server.mjs && node --check scripts/check-rendered-html.mjs && node --check scripts/check-official-content.mjs && node --check scripts/sync-official-content.mjs && node --check scripts/manage-macos-service.mjs && node scripts/check-official-content.mjs && node scripts/check-rendered-html.mjs && node scripts/check-rendered-html.mjs --fallback-only",
+    "content:sync": "node scripts/sync-official-content.mjs",
+    "content:check": "node scripts/check-official-content.mjs",
+    "service:install": "node scripts/manage-macos-service.mjs install",
+    "service:status": "node scripts/manage-macos-service.mjs status",
+    "service:uninstall": "node scripts/manage-macos-service.mjs uninstall"
+  },
+  "devDependencies": {
+    "cheerio": "1.2.0"
+  }
 }

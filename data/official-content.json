@@ -1,0 +1,1371 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-08-20T13:16:37.950Z",
+  "sources": {
+    "modelSitemap": "https://maisonsturner.ca/model-sitemap.xml",
+    "company": "https://maisonsturner.ca/a-propos",
+    "contact": "https://maisonsturner.ca/nous-joindre",
+    "process": "https://maisonsturner.ca/notre-offre/les-etapes-de-votre-projet",
+    "faq": "https://maisonsturner.ca/faq",
+    "components": "https://maisonsturner.ca/notre-offre/composantes-des-modules",
+    "certifications": "https://maisonsturner.ca/a-propos/certifications",
+    "privacy": "https://maisonsturner.ca/politique-de-confidentialite",
+    "apchqProfile": "https://www.trouverunentrepreneur.com/profile/trois-rivieres/maisons-s-turner-inc",
+    "gcrDirectory": "https://repertoire.garantiegcr.com/",
+    "rbqDirectory": "https://www.pes.rbq.gouv.qc.ca/RegistreLicences/RechercheEntreprise"
+  },
+  "company": {
+    "name": "Maisons S. Turner inc.",
+    "foundedOn": "1994-03-03",
+    "licenseRbq": "8002-1710-85",
+    "address": "1021, rue des Ateliers, Trois-Rivières, Québec G9B 7J5",
+    "phone": "819 377-0570",
+    "tollFree": "1 800 567-9969",
+    "email": "info@maisonsturner.ca",
+    "hours": [
+      "Lundi au jeudi : 9 h à 16 h 30",
+      "Vendredi : 9 h à 16 h",
+      "Samedi : 12 h à 16 h",
+      "Dimanche : fermé",
+      "Également disponible sur rendez-vous"
+    ]
+  },
+  "certifications": [
+    {
+      "id": "gcr",
+      "label": "GCR",
+      "detail": "Garantie des maisons neuves annoncée par Turner",
+      "sourceUrl": "https://maisonsturner.ca/a-propos/certifications",
+      "verificationUrl": "https://repertoire.garantiegcr.com/"
+    },
+    {
+      "id": "apchq",
+      "label": "APCHQ",
+      "detail": "Entreprise répertoriée comme membre",
+      "sourceUrl": "https://www.trouverunentrepreneur.com/profile/trois-rivieres/maisons-s-turner-inc"
+    },
+    {
+      "id": "qai",
+      "label": "QAI",
+      "detail": "Usine certifiée selon CAN/CSA-A277",
+      "sourceUrl": "https://maisonsturner.ca/a-propos/certifications"
+    },
+    {
+      "id": "acq",
+      "label": "ACQ",
+      "detail": "Adhésion annoncée par Turner",
+      "sourceUrl": "https://maisonsturner.ca/a-propos/certifications"
+    },
+    {
+      "id": "ambmq",
+      "label": "AMBMQ",
+      "detail": "Adhésion annoncée par Turner",
+      "sourceUrl": "https://maisonsturner.ca/a-propos/certifications"
+    }
+  ],
+  "processSteps": [
+    {
+      "label": "Étape 01",
+      "shortTitle": "Terrain et budget",
+      "title": "Situer le terrain, les besoins et le budget.",
+      "copy": "Les dimensions, les services, les contraintes municipales et le relief orientent le choix du modèle et la planification du projet.",
+      "checks": [
+        "Documenter le terrain",
+        "Définir les besoins",
+        "Établir la capacité budgétaire",
+        "Choisir un plan de départ"
+      ]
+    },
+    {
+      "label": "Étape 02",
+      "shortTitle": "Entente préliminaire",
+      "title": "Personnaliser les choix et recevoir un plan final.",
+      "copy": "Les matériaux, les couleurs et les modifications réalisables sont précisés avant la préparation du plan complet.",
+      "checks": [
+        "Valider les modifications",
+        "Choisir les matériaux",
+        "Clarifier les inclusions",
+        "Recevoir le plan final"
+      ]
+    },
+    {
+      "label": "Étape 03",
+      "shortTitle": "Contrat officiel",
+      "title": "Signer et verrouiller la planification.",
+      "copy": "Le contrat officiel enclenche la fabrication et permet d’établir les jalons de production, de livraison et de chantier.",
+      "checks": [
+        "Signer le contrat",
+        "Confirmer la portée",
+        "Établir l’échéancier",
+        "Coordonner les intervenants"
+      ]
+    },
+    {
+      "label": "Étape 04",
+      "shortTitle": "Production",
+      "title": "Suivre la construction des modules en usine.",
+      "copy": "Une visite permet de voir la maison prendre forme et de regrouper la documentation utile au projet.",
+      "checks": [
+        "Lancer la production",
+        "Suivre les jalons",
+        "Visiter les modules",
+        "Regrouper les documents"
+      ]
+    },
+    {
+      "label": "Étape 05",
+      "shortTitle": "Livraison",
+      "title": "Assembler, inspecter et remettre les clés.",
+      "copy": "Les équipes réalisent le raccord de menuiserie et les travaux prévus, puis le superviseur effectue l’inspection de fin de mandat avec le client.",
+      "checks": [
+        "Livrer les modules",
+        "Réaliser le raccord",
+        "Inspecter le mandat",
+        "Remettre les clés"
+      ]
+    }
+  ],
+  "faqItems": [
+    {
+      "question": "Livrez-vous partout au Québec?",
+      "answer": "Oui. Turner indique livrer partout au Québec; la faisabilité et les coûts demeurent à confirmer selon l’emplacement et l’accès au terrain."
+    },
+    {
+      "question": "Puis-je modifier un plan existant?",
+      "answer": "Oui. Certaines modifications peuvent être étudiées avec un conseiller selon le plan choisi et les contraintes du projet."
+    },
+    {
+      "question": "Puis-je prendre certains travaux en charge?",
+      "answer": "Oui. Le client peut participer à certaines étapes afin d’ajuster la portée et le budget, à condition que les responsabilités soient précisées dans l’entente."
+    },
+    {
+      "question": "Excavation et fondation peuvent-elles être coordonnées?",
+      "answer": "Oui. Turner indique pouvoir prendre ces étapes en charge ou travailler avec des sous-traitants choisis par le client."
+    },
+    {
+      "question": "Qu’est-ce qu’un raccord de menuiserie?",
+      "answer": "Il relie les modules au chantier et complète les zones de jonction, notamment la toiture, l’isolation, le revêtement et les murs intérieurs selon le devis."
+    },
+    {
+      "question": "Peut-on visiter des maisons modèles?",
+      "answer": "Oui. Plusieurs maisons modèles sont annoncées comme visitables aux bureaux de Trois-Rivières; confirmez le modèle et l’horaire avant le déplacement."
+    },
+    {
+      "question": "Le projet est-il couvert par une garantie?",
+      "answer": "Turner annonce la garantie GCR pour les maisons qu’elle fabrique. Vérifiez toujours le statut courant et la portée applicable dans le répertoire GCR."
+    },
+    {
+      "question": "Puis-je construire sur mon propre terrain?",
+      "answer": "Oui. Turner indique construire autant sur les terrains de ses clients que dans ses secteurs domiciliaires."
+    }
+  ],
+  "inclusionGroups": [
+    {
+      "title": "Composantes annoncées",
+      "intro": "Éléments indiqués par Turner, toujours selon le devis ou le plan.",
+      "items": [
+        "Plan complet",
+        "Garantie GCR",
+        "Transport des modules et grue",
+        "Raccord menuiserie",
+        "Conteneur pour la durée des travaux",
+        "Finition intérieure avec divisions fini sur gypse",
+        "Isolation des murs extérieurs et de la toiture supérieure aux normes actuelles",
+        "Portes extérieures et fenêtres",
+        "Toiture en contre-plaqué et bardeau",
+        "Revêtement extérieur*",
+        "Plomberie et électricité dans les murs",
+        "Réservoir 60 g et panneau électrique 200 AMPS",
+        "Lumières encastrées*",
+        "Préparation intra murale au rez-de-chaussée pour aspirateur central",
+        "Hotte de cuisine",
+        "Évier double et robinet installés",
+        "Bain autoportant, robinet de bain et toilette",
+        "Lavabo, robinet, base et porte de douche installés*",
+        "Murs de douche avec panneaux de finitions installés",
+        "Armoires et comptoir de cuisine installés",
+        "Vanité et comptoir de salle de bain installés",
+        "Escalier en particule au sous-sol installé avec un mur de chaque côté fini sur gypse",
+        "Portes intérieures",
+        "Poignées, tablettes, pôles, cadrages et plinthes en vrac",
+        "Échangeur d’air installé*",
+        "Équipement de chauffage et d’éclairage de base pour le sous-sol"
+      ]
+    },
+    {
+      "title": "Options possibles",
+      "intro": "Travaux qui peuvent être ajoutés ou coordonnés après discussion avec un conseiller.",
+      "items": [
+        "Excavation",
+        "Fondation (Murs et plancher, 3 grandes fenêtres installées, drain français, etc.)",
+        "Raccordement électrique au chantier",
+        "Raccordement plomberie au chantier",
+        "Perron avant avec rampes et colonnes",
+        "Maçonnerie",
+        "Joint",
+        "Peinture",
+        "Couvre-plancher",
+        "Installation des poignées, tablettes, pôles, hotte, cadrages et plinthes",
+        "Isolation, finition des murs et du plafond au sous-sol",
+        "Patio arrière et rampes"
+      ]
+    },
+    {
+      "title": "Par le client",
+      "intro": "Éléments que la page officielle attribue normalement au propriétaire.",
+      "items": [
+        "Gouttières",
+        "Aménagement paysager",
+        "Crépis",
+        "Luminaires décoratifs"
+      ]
+    }
+  ],
+  "models": [
+    {
+      "id": "athenes",
+      "name": "Athènes",
+      "type": "Chalet",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 576,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/athenes-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/athenes-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/athenes-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Économique",
+        "Toit cathédrale"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/athenes",
+      "sourceLastModified": "2026-03-09T19:21:43+00:00",
+      "virtualTourUrl": null,
+      "description": "Athènes est un modèle chalet de style contemporain, annoncé à 576 pi² avec 1 chambre et 1 salle de bain."
+    },
+    {
+      "id": "prague",
+      "name": "Prague",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1034,
+      "image": "https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Économique",
+        "Garde-manger"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/prague",
+      "sourceLastModified": "2026-03-09T19:28:58+00:00",
+      "virtualTourUrl": null,
+      "description": "Prague est un modèle plain-pied de style contemporain, annoncé à 1034 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "oslo",
+      "name": "Oslo",
+      "type": "Chalet",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1067,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Aire ouverte spacieuse",
+        "Toit cathédrale"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/oslo",
+      "sourceLastModified": "2024-02-15T21:11:38+00:00",
+      "virtualTourUrl": null,
+      "description": "Oslo est un modèle chalet de style contemporain, annoncé à 1067 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "portofino",
+      "name": "Portofino",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1222,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Aire ouverte spacieuse",
+        "Rangement"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/portofino",
+      "sourceLastModified": "2024-02-15T21:07:31+00:00",
+      "virtualTourUrl": "https://versom-vr.com/3d-model/modele-portofino/fullscreen/ ",
+      "description": "Portofino est un modèle plain-pied de style contemporain, annoncé à 1222 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "turenne",
+      "name": "Turenne",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": true,
+      "area": 1400,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/turenne-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/turenne-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/turenne-1-1015x762.jpg",
+      "features": [
+        "Garage",
+        "Aire ouverte spacieuse",
+        "Intimité"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/turenne",
+      "sourceLastModified": "2024-02-15T20:44:36+00:00",
+      "virtualTourUrl": null,
+      "description": "Turenne est un modèle plain-pied de style contemporain, annoncé à 1400 pi² avec 2 chambres et 1 salle de bain et un garage."
+    },
+    {
+      "id": "liverpool",
+      "name": "Liverpool",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1075,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/liverpool-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/liverpool-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/liverpool-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Économique",
+        "Intimité"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/liverpool",
+      "sourceLastModified": "2026-03-09T19:25:45+00:00",
+      "virtualTourUrl": null,
+      "description": "Liverpool est un modèle plain-pied de style classique, annoncé à 1075 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "athenes-rez-de-jardin",
+      "name": "Athènes (rez-de-jardin)",
+      "type": "Chalet",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "floors": 2,
+      "garage": false,
+      "area": 576,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/athenes-rdj-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/athenes-rdj-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/athenes-rdj-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Rez-de-jardin",
+        "Toit cathédrale"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/athenes-rez-de-jardin",
+      "sourceLastModified": "2026-03-09T19:23:47+00:00",
+      "virtualTourUrl": null,
+      "description": "Athènes (rez-de-jardin) est un modèle chalet de style contemporain, annoncé à 576 pi² avec 1 chambre et 1 salle de bain."
+    },
+    {
+      "id": "avignon",
+      "name": "Avignon",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 936,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/avignon-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/avignon-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/avignon-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Économique",
+        "Aire ouverte spacieuse"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/avignon",
+      "sourceLastModified": "2024-04-22T19:21:24+00:00",
+      "virtualTourUrl": null,
+      "description": "Avignon est un modèle plain-pied de style classique, annoncé à 936 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "bari",
+      "name": "Bari",
+      "type": "Chalet",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1080,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/bari-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/bari-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/bari-1-1015x762.jpg",
+      "features": [
+        "Toit cathédrale",
+        "Grande fenestration",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/bari",
+      "sourceLastModified": "2024-04-22T19:21:36+00:00",
+      "virtualTourUrl": null,
+      "description": "Bari est un modèle chalet de style classique, annoncé à 1080 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "bastia",
+      "name": "Bastia",
+      "type": "Deux étages",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1580,
+      "image": "https://maisonsturner.ca/app/uploads/2023/12/01_bastia-530-s-facade-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2023/12/01_bastia-530-s-facade-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2023/12/01_bastia-530-s-facade-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "3 chambres",
+        "Aire ouverte spacieuse"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/bastia",
+      "sourceLastModified": "2024-04-22T19:21:49+00:00",
+      "virtualTourUrl": null,
+      "description": "Bastia est un modèle maison à deux étages de style contemporain, annoncé à 1580 pi² avec 3 chambres et 2 salles de bain."
+    },
+    {
+      "id": "beaujolais",
+      "name": "Beaujolais",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1250,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/beaujolais-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/beaujolais-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/beaujolais-1-1015x762.jpg",
+      "features": [
+        "Entrée séparée",
+        "3 chambres",
+        "Aire ouverte spacieuse"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/beaujolais",
+      "sourceLastModified": "2024-04-22T19:21:29+00:00",
+      "virtualTourUrl": null,
+      "description": "Beaujolais est un modèle plain-pied de style classique, annoncé à 1250 pi² avec 3 chambres et 1 salle de bain."
+    },
+    {
+      "id": "bella",
+      "name": "Bella",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1080,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/bella-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/bella-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/bella-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/bella",
+      "sourceLastModified": "2024-03-12T20:41:43+00:00",
+      "virtualTourUrl": null,
+      "description": "Bella est un modèle plain-pied de style classique, annoncé à 1080 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "bucarest",
+      "name": "Bucarest",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1075,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/bucarest-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/bucarest-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/bucarest-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Économique",
+        "Aire ouverte spacieuse"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/bucarest",
+      "sourceLastModified": "2026-03-09T19:26:38+00:00",
+      "virtualTourUrl": null,
+      "description": "Bucarest est un modèle plain-pied de style classique, annoncé à 1075 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "catania",
+      "name": "Catania",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1058,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/catania-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/catania-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/catania-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/catania",
+      "sourceLastModified": "2026-06-11T20:31:22+00:00",
+      "virtualTourUrl": null,
+      "description": "Catania est un modèle plain-pied de style classique, annoncé à 1058 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "chambery",
+      "name": "Chambéry",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1375,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/chambery-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/chambery-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/chambery-1-1015x762.jpg",
+      "features": [
+        "Entrée séparée",
+        "Grande fenestration",
+        "Intimité"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/chambery",
+      "sourceLastModified": "2024-03-12T20:43:49+00:00",
+      "virtualTourUrl": null,
+      "description": "Chambéry est un modèle plain-pied de style classique, annoncé à 1375 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "chateauneuf",
+      "name": "Châteauneuf",
+      "type": "Deux étages",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "floors": 2,
+      "garage": false,
+      "area": 2478,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/chateauneuf-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/chateauneuf-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/chateauneuf-1-1015x762.jpg",
+      "features": [
+        "Entrée séparée",
+        "3 chambres",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/chateauneuf",
+      "sourceLastModified": "2024-04-25T15:16:04+00:00",
+      "virtualTourUrl": null,
+      "description": "Châteauneuf est un modèle maison à deux étages de style classique, annoncé à 2478 pi² avec 4 chambres et 3 salles de bain."
+    },
+    {
+      "id": "clary",
+      "name": "Clary",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1187,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/clary-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/clary-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/clary-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Aire ouverte spacieuse",
+        "Rangement"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/clary",
+      "sourceLastModified": "2024-03-12T21:02:10+00:00",
+      "virtualTourUrl": null,
+      "description": "Clary est un modèle plain-pied de style classique, annoncé à 1187 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "copenhague",
+      "name": "Copenhague",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1102,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/copenhague-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/copenhague-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/copenhague-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "Aire ouverte spacieuse",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/copenhague",
+      "sourceLastModified": "2024-02-21T20:57:54+00:00",
+      "virtualTourUrl": null,
+      "description": "Copenhague est un modèle plain-pied de style contemporain, annoncé à 1102 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "danemark",
+      "name": "Danemark",
+      "type": "Chalet",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1122,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/danemark-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/danemark-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/danemark-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Entrée séparée",
+        "Toit cathédrale"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/danemark",
+      "sourceLastModified": "2026-03-09T19:27:21+00:00",
+      "virtualTourUrl": null,
+      "description": "Danemark est un modèle chalet de style contemporain, annoncé à 1122 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "dijon",
+      "name": "Dijon",
+      "type": "Plain-pied",
+      "style": "Contemporain / Champêtre",
+      "styles": [
+        "Contemporain",
+        "Champêtre"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1161,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/dijon-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/dijon-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/dijon-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "Aire ouverte spacieuse",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/dijon",
+      "sourceLastModified": "2024-03-12T20:31:04+00:00",
+      "virtualTourUrl": null,
+      "description": "Dijon est un modèle plain-pied de style contemporain et champêtre, annoncé à 1161 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "fontainebleau",
+      "name": "Fontainebleau",
+      "type": "Deux étages",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": true,
+      "area": 1921,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/fontainebleau-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/fontainebleau-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/fontainebleau-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "3 chambres",
+        "Garage"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/fontainebleau",
+      "sourceLastModified": "2024-03-12T20:37:00+00:00",
+      "virtualTourUrl": null,
+      "description": "Fontainebleau est un modèle maison à deux étages de style classique, annoncé à 1921 pi² avec 3 chambres et 2 salles de bain et un garage."
+    },
+    {
+      "id": "francfort",
+      "name": "Francfort",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1102,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/francfort-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/francfort-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/francfort-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Entrée séparée"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/francfort",
+      "sourceLastModified": "2024-02-16T19:45:19+00:00",
+      "virtualTourUrl": null,
+      "description": "Francfort est un modèle plain-pied de style classique, annoncé à 1102 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "geneve",
+      "name": "Genève",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1186,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/geneve-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/geneve-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/geneve-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Rangement"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/geneve",
+      "sourceLastModified": "2024-03-12T19:48:52+00:00",
+      "virtualTourUrl": null,
+      "description": "Genève est un modèle plain-pied de style classique, annoncé à 1186 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "grenoble",
+      "name": "Grenoble",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1144,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/grenoble-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/grenoble-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/grenoble-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "Aire ouverte spacieuse",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/grenoble",
+      "sourceLastModified": "2024-04-23T12:41:23+00:00",
+      "virtualTourUrl": null,
+      "description": "Grenoble est un modèle plain-pied de style classique, annoncé à 1144 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "lausanne",
+      "name": "Lausanne",
+      "type": "Deux étages",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1396,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-1-1015x762.jpg",
+      "features": [
+        "Entrée séparée",
+        "3 chambres",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/lausanne",
+      "sourceLastModified": "2024-04-25T15:16:44+00:00",
+      "virtualTourUrl": null,
+      "description": "Lausanne est un modèle maison à deux étages de style classique, annoncé à 1396 pi² avec 3 chambres et 2 salles de bain."
+    },
+    {
+      "id": "lausanne-rive-sud",
+      "name": "Lausanne rive-sud",
+      "type": "Deux étages",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1482,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-rive-sud-1.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-rive-sud-1.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-rive-sud-1.jpg",
+      "features": [
+        "Entrée séparée",
+        "3 chambres",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/lausanne-rive-sud",
+      "sourceLastModified": "2024-03-12T21:10:34+00:00",
+      "virtualTourUrl": null,
+      "description": "Lausanne rive-sud est un modèle maison à deux étages de style classique, annoncé à 1482 pi² avec 3 chambres et 2 salles de bain."
+    },
+    {
+      "id": "lisbonne",
+      "name": "Lisbonne",
+      "type": "Deux étages",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": true,
+      "area": 2256,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/lisbonne-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/lisbonne-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/lisbonne-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "3 chambres",
+        "Garage"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/lisbonne",
+      "sourceLastModified": "2024-04-26T12:53:14+00:00",
+      "virtualTourUrl": null,
+      "description": "Lisbonne est un modèle maison à deux étages de style contemporain, annoncé à 2256 pi² avec 3 chambres et 2 salles de bain et un garage."
+    },
+    {
+      "id": "louisbourg",
+      "name": "Louisbourg",
+      "type": "Plain-pied",
+      "style": "Champêtre",
+      "styles": [
+        "Champêtre"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1275,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/louisbourg-plan.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/louisbourg-plan.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/louisbourg-plan.jpg",
+      "features": [
+        "Entrée séparée",
+        "3 chambres",
+        "Optimisation"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/louisbourg",
+      "sourceLastModified": "2024-03-12T20:46:57+00:00",
+      "virtualTourUrl": null,
+      "description": "Louisbourg est un modèle plain-pied de style champêtre, annoncé à 1275 pi² avec 3 chambres et 1 salle de bain."
+    },
+    {
+      "id": "lyon",
+      "name": "Lyon",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 936,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/lyon-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/lyon-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/lyon-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Économique",
+        "Aire ouverte spacieuse"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/lyon",
+      "sourceLastModified": "2024-02-16T18:48:09+00:00",
+      "virtualTourUrl": null,
+      "description": "Lyon est un modèle plain-pied de style classique, annoncé à 936 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "madrid",
+      "name": "Madrid",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1070,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/madrid-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/madrid-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/madrid-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Rangement"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/madrid",
+      "sourceLastModified": "2024-02-16T19:09:32+00:00",
+      "virtualTourUrl": null,
+      "description": "Madrid est un modèle plain-pied de style contemporain, annoncé à 1070 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "milan",
+      "name": "Milan",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1195,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/milan-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/milan-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/milan-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "Rangement",
+        "Intimité"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/milan",
+      "sourceLastModified": "2024-02-15T21:17:06+00:00",
+      "virtualTourUrl": null,
+      "description": "Milan est un modèle plain-pied de style contemporain, annoncé à 1195 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "miranda",
+      "name": "Miranda",
+      "type": "Deux étages",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1881,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/miranda-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/miranda-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/miranda-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "3 chambres",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/miranda",
+      "sourceLastModified": "2024-02-16T20:00:49+00:00",
+      "virtualTourUrl": null,
+      "description": "Miranda est un modèle maison à deux étages de style contemporain, annoncé à 1881 pi² avec 3 chambres et 2 salles de bain."
+    },
+    {
+      "id": "montauban",
+      "name": "Montauban",
+      "type": "Chalet",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 2,
+      "garage": false,
+      "area": 1379,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/montauban-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/montauban-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/montauban-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Aire ouverte spacieuse",
+        "Garage ouvert"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/montauban",
+      "sourceLastModified": "2024-02-16T19:24:37+00:00",
+      "virtualTourUrl": null,
+      "description": "Montauban est un modèle chalet de style contemporain, annoncé à 1379 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "montpellier",
+      "name": "Montpellier",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1343,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/montpellier-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/montpellier-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/montpellier-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "Aire ouverte spacieuse",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/montpellier",
+      "sourceLastModified": "2024-02-21T21:03:14+00:00",
+      "virtualTourUrl": null,
+      "description": "Montpellier est un modèle plain-pied de style classique, annoncé à 1343 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "nantes",
+      "name": "Nantes",
+      "type": "Chalet",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1120,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/nantes-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/nantes-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/nantes-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Aire ouverte spacieuse",
+        "Toit cathédrale"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/nantes",
+      "sourceLastModified": "2024-02-16T19:41:15+00:00",
+      "virtualTourUrl": null,
+      "description": "Nantes est un modèle chalet de style classique, annoncé à 1120 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "nice-1",
+      "name": "Nice 1",
+      "type": "Chalet",
+      "style": "Champêtre",
+      "styles": [
+        "Champêtre"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1320,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/nice-1-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/nice-1-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/nice-1-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Rez-de-jardin",
+        "Optimisation"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/nice-1",
+      "sourceLastModified": "2024-03-12T21:05:36+00:00",
+      "virtualTourUrl": null,
+      "description": "Nice 1 est un modèle chalet de style champêtre, annoncé à 1320 pi² avec 2 chambres et 2 salles de bain."
+    },
+    {
+      "id": "nice-2",
+      "name": "Nice 2",
+      "type": "Chalet",
+      "style": "Champêtre",
+      "styles": [
+        "Champêtre"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1320,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/nice-2-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/nice-2-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/nice-2-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Rez-de-jardin",
+        "Optimisation"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/nice-2",
+      "sourceLastModified": "2024-03-12T21:08:08+00:00",
+      "virtualTourUrl": null,
+      "description": "Nice 2 est un modèle chalet de style champêtre, annoncé à 1320 pi² avec 2 chambres et 2 salles de bain."
+    },
+    {
+      "id": "orleans",
+      "name": "Orléans",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1019,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/orleans-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/orleans-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/orleans-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Économique",
+        "Rangement"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/orleans",
+      "sourceLastModified": "2024-02-16T18:42:14+00:00",
+      "virtualTourUrl": null,
+      "description": "Orléans est un modèle plain-pied de style contemporain, annoncé à 1019 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "provence",
+      "name": "Provence",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1046,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/provence-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/provence-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/provence-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Économique",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/provence",
+      "sourceLastModified": "2024-03-12T20:56:42+00:00",
+      "virtualTourUrl": null,
+      "description": "Provence est un modèle plain-pied de style classique, annoncé à 1046 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "singapour",
+      "name": "Singapour",
+      "type": "Plain-pied",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1102,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/singapour-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/singapour-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/singapour-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/singapour",
+      "sourceLastModified": "2024-04-23T12:41:02+00:00",
+      "virtualTourUrl": null,
+      "description": "Singapour est un modèle plain-pied de style contemporain, annoncé à 1102 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "spezia",
+      "name": "Spézia",
+      "type": "Deux étages",
+      "style": "Contemporain",
+      "styles": [
+        "Contemporain"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1706,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/spezia-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/spezia-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/spezia-1-1015x762.jpg",
+      "features": [
+        "Buanderie",
+        "3 chambres",
+        "Grande fenestration"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/spezia",
+      "sourceLastModified": "2024-02-16T19:57:10+00:00",
+      "virtualTourUrl": null,
+      "description": "Spézia est un modèle maison à deux étages de style contemporain, annoncé à 1706 pi² avec 3 chambres et 2 salles de bain."
+    },
+    {
+      "id": "torino",
+      "name": "Torino",
+      "type": "Plain-pied",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1076,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/torino-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/torino-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/torino-1-1015x762.jpg",
+      "features": [
+        "Optimisation",
+        "Aire ouverte spacieuse",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/torino",
+      "sourceLastModified": "2024-02-21T21:00:55+00:00",
+      "virtualTourUrl": null,
+      "description": "Torino est un modèle plain-pied de style classique, annoncé à 1076 pi² avec 2 chambres et 1 salle de bain."
+    },
+    {
+      "id": "valence",
+      "name": "Valence",
+      "type": "Deux étages",
+      "style": "Champêtre",
+      "styles": [
+        "Champêtre"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "floors": 2,
+      "garage": false,
+      "area": 1582,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/valence-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/valence-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/valence-1-1015x762.jpg",
+      "features": [
+        "Entrée séparée",
+        "3 chambres",
+        "Buanderie"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/valence",
+      "sourceLastModified": "2024-03-12T21:13:08+00:00",
+      "virtualTourUrl": null,
+      "description": "Valence est un modèle maison à deux étages de style champêtre, annoncé à 1582 pi² avec 3 chambres et 2 salles de bain."
+    },
+    {
+      "id": "vienne",
+      "name": "Vienne",
+      "type": "Chalet",
+      "style": "Classique",
+      "styles": [
+        "Classique"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "floors": 1,
+      "garage": false,
+      "area": 1080,
+      "image": "https://maisonsturner.ca/app/uploads/2024/02/vienne-1-1015x762.jpg",
+      "remoteImage": "https://maisonsturner.ca/app/uploads/2024/02/vienne-1-1015x762.jpg",
+      "localImage": "https://maisonsturner.ca/app/uploads/2024/02/vienne-1-1015x762.jpg",
+      "features": [
+        "Grande fenestration",
+        "Économique",
+        "Aire ouverte spacieuse"
+      ],
+      "sourceUrl": "https://maisonsturner.ca/modeles/vienne",
+      "sourceLastModified": "2026-03-09T19:27:48+00:00",
+      "virtualTourUrl": null,
+      "description": "Vienne est un modèle chalet de style classique, annoncé à 1080 pi² avec 2 chambres et 1 salle de bain."
+    }
+  ]
+}
