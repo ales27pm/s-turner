@@ -10,6 +10,21 @@ npm start
 
 Open `http://127.0.0.1:4173`.
 
+Runtime configuration is validated before the server binds. Invalid ports,
+hosts, webhook URLs, paths, or boolean flags stop startup with a specific error
+instead of being passed through to Node:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `HOST` | `127.0.0.1` | Server bind host |
+| `PORT` | `4173` | Server port, from 1 to 65535 |
+| `TURNER_DATA_DIR` | `.turner-data` | Private intake storage directory |
+| `TURNER_ADMIN_TOKEN` | disabled | Bearer token for intake listing |
+| `TURNER_CRM_WEBHOOK_URL` | disabled | Absolute HTTP(S) CRM endpoint |
+| `TURNER_FALLBACK_ONLY` | `0` | Use `0`, `1`, `false`, or `true` |
+| `TURNER_PUBLIC_ORIGIN` | `https://maisonsturner.ca` | Canonical origin used by SEO metadata, robots, and sitemap |
+| `TURNER_INDEXABLE` | `true` | Set to `false` to emit `noindex` and block crawling on a preview host |
+
 ### Keep the macOS preview running
 
 For a Tailscale preview that must survive terminal and Codex sessions, install
@@ -18,6 +33,18 @@ the bundled user LaunchAgent:
 ```bash
 npm run service:install
 tailscale serve --bg 4173
+```
+
+Override the LaunchAgent endpoint when installing it, then point the proxy to
+the same port:
+
+```bash
+TURNER_SERVICE_HOST=127.0.0.1 \
+TURNER_SERVICE_PORT=4180 \
+TURNER_SERVICE_PUBLIC_ORIGIN=https://preview.example.com \
+TURNER_SERVICE_INDEXABLE=false \
+npm run service:install
+tailscale serve --bg 4180
 ```
 
 The service binds only to `127.0.0.1`, restarts automatically, and writes its
@@ -29,13 +56,48 @@ npm run service:status
 npm run service:uninstall
 ```
 
+The LaunchAgent does not rotate those files. Configure `newsyslog` or a log
+collector before using this service as a long-lived production process.
+
 Run the static and integration checks with:
 
 ```bash
 npm run check
 ```
 
-The check starts an isolated server, validates the rendered scripts and HTTP behavior, exercises the budget and intake APIs, then removes its temporary intake data.
+The check starts an isolated server and CRM receiver, validates the rendered
+scripts and HTTP behavior, exercises the budget and intake APIs, verifies the
+custom data directory and webhook payload, then removes all temporary data.
+
+## Browser and dependency requirements
+
+The Node-rendered application is the supported entry point and does not depend
+on browser-side gzip decompression. The legacy static `bootstrap.js` path is a
+compatibility scaffold; opening it directly requires a browser that implements
+`DecompressionStream`. Do not deploy the standalone `index.html` as the
+production entry point.
+
+`cheerio` is intentionally a development dependency because it is used only by
+`content:sync`. A runtime host can install with `npm ci --omit=dev`; run content
+synchronization in a build or maintenance environment and deploy the validated,
+checked-in snapshot.
+
+## Search and social metadata
+
+The server returns the complete landing page to crawlers without requiring
+JavaScript. The rendered `<head>` contains a descriptive title and description,
+one canonical URL, Open Graph/Twitter cards, and Schema.org graphs for the
+business, website, and FAQ. `/modeles/` is a server-rendered catalogue with an
+`ItemList`; each `/modeles/:id/` page has unique metadata, breadcrumbs, and a
+`Product` graph generated from the synchronized model record.
+
+`/robots.txt` and `/sitemap.xml` are generated from `TURNER_PUBLIC_ORIGIN`. Set
+that variable to the exact externally reachable origin, without a path. Preview
+hosts can use their preview origin for auditing. Set `TURNER_INDEXABLE=false`
+when the preview should not appear in search, then switch the public origin to
+`https://maisonsturner.ca` and enable indexing only at the official cutover.
+The sitemap contains the homepage, catalogue, and all model pages. Unknown
+paths and unknown model slugs return a real `404`, including for `HEAD` requests.
 
 ## Official content snapshot
 
@@ -65,6 +127,7 @@ TURNER_FALLBACK_ONLY=1 PORT=4174 npm start
 
 - original rich responsive layout restored
 - interactive catalogue of all official model sheets with source provenance
+- server-rendered catalogue and individual model URLs for search crawlers
 - filters for all published types, styles and bedroom counts
 - model comparison with hide/clear controls
 - official five-step project process explorer
@@ -88,6 +151,12 @@ curl -s http://127.0.0.1:4173/api/implementation-status | python3 -m json.tool
 curl -s http://127.0.0.1:4173/api/official-content | python3 -m json.tool
 ```
 
+For a monitoring probe, require both HTTP success and the JSON health flag:
+
+```bash
+curl --fail --silent http://127.0.0.1:4173/__health | jq -e '.ok == true' >/dev/null
+```
+
 ### Project intake
 
 The contact form is bridged to `POST /api/project-intake`. Valid submissions are rate-limited and written to:
@@ -97,6 +166,11 @@ The contact form is bridged to `POST /api/project-intake`. Valid submissions are
 ```
 
 The `.turner-data/` runtime directory is ignored by Git and must remain outside versioned artifacts because it can contain contact information.
+
+Browser submissions must be same-origin and use `application/json`; cross-origin
+browser requests are rejected. The endpoint uses no cookie or session authority,
+so a CSRF token would not protect an authenticated action. The stored record
+contains an IP hash and explicit privacy metadata, but never the raw IP address.
 
 Set a custom storage directory with:
 
@@ -126,9 +200,51 @@ curl -s http://127.0.0.1:4173/api/budget/summary \
   | python3 -m json.tool
 ```
 
+## Linux production example
+
+Install the application read-only under `/opt/maisons-turner`, create a dedicated
+`turner` user, keep secrets in a root-owned `/etc/maisons-turner.env`, and use a
+separate writable data directory. A minimal systemd unit is:
+
+```ini
+[Unit]
+Description=Maisons S. Turner web application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=turner
+Group=turner
+WorkingDirectory=/opt/maisons-turner
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=4173
+Environment=TURNER_DATA_DIR=/var/lib/maisons-turner
+Environment=TURNER_PUBLIC_ORIGIN=https://maisonsturner.ca
+EnvironmentFile=-/etc/maisons-turner.env
+ExecStart=/usr/bin/node /opt/maisons-turner/server.mjs
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/maisons-turner
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Terminate TLS in a maintained reverse proxy, preserve the original `Host`
+header for same-origin validation, and have the monitoring system poll
+`/__health`. systemd sends stdout and stderr to journald; configure retention and
+alerts there or in the organization’s logging platform.
+
 ## Remaining production work
 
 - Establish an owner and review cadence for the synchronized Turner content.
 - Validate final business copy and the privacy/legal implementation with Turner.
 - Connect the project intake webhook to the real CRM/backend before public production launch.
 - Replace local JSONL storage with an approved encrypted data store and retention policy before handling production submissions.
+- Define production metrics, centralized log retention, alert thresholds, and an incident owner.

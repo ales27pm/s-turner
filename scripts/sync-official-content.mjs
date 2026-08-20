@@ -85,9 +85,7 @@ function parseModel(entry, html) {
     floors: parseNumber(specs['étage(s)'], 'floors', entry.url),
     garage: /^oui$/i.test(specs.garage || ''),
     area: parseNumber(specs.superficie, 'area', entry.url),
-    image,
-    remoteImage: image,
-    localImage: image,
+    imageUrl: image,
     features,
     sourceUrl: entry.url,
     sourceLastModified: entry.lastModified,
@@ -95,7 +93,7 @@ function parseModel(entry, html) {
   };
   model.description = factualDescription(model);
 
-  if (!model.id || !model.name || !model.type || !model.styles.length || !model.image || model.features.length === 0) {
+  if (!model.id || !model.name || !model.type || !model.styles.length || !model.imageUrl || model.features.length === 0) {
     throw new Error(`Incomplete model data on ${entry.url}`);
   }
   return model;

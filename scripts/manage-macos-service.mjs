@@ -5,6 +5,7 @@ import { chmod, mkdir, rm, writeFile } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseFlag, parseHost, parseOrigin, parsePort } from './runtime-config.mjs';
 
 const label = 'com.maisons-turner.web';
 const action = process.argv[2];
@@ -19,6 +20,7 @@ if (process.platform !== 'darwin' || typeof process.getuid !== 'function') {
 
 const domain = `gui/${process.getuid()}`;
 const service = `${domain}/${label}`;
+const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
 function findNodeExecutable() {
   const result = spawnSync('/usr/bin/which', ['node'], { encoding: 'utf8' });
@@ -52,7 +54,30 @@ function launchctl(args, { allowMissing = false, inherit = false } = {}) {
   return result;
 }
 
-function plist() {
+async function bootstrapAgent() {
+  let lastError;
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    try {
+      launchctl(['bootstrap', domain, agentPath]);
+      return;
+    } catch (error) {
+      lastError = error;
+      if (attempt < 5) await sleep(attempt * 150);
+    }
+  }
+  throw lastError;
+}
+
+function serviceSettings() {
+  return {
+    host: parseHost(process.env.TURNER_SERVICE_HOST, { name: 'TURNER_SERVICE_HOST' }),
+    port: parsePort(process.env.TURNER_SERVICE_PORT, { name: 'TURNER_SERVICE_PORT' }),
+    publicOrigin: parseOrigin(process.env.TURNER_SERVICE_PUBLIC_ORIGIN, { name: 'TURNER_SERVICE_PUBLIC_ORIGIN', fallback: 'https://maisonsturner.ca' }),
+    indexable: parseFlag(process.env.TURNER_SERVICE_INDEXABLE, { name: 'TURNER_SERVICE_INDEXABLE', fallback: true }),
+  };
+}
+
+function plist(settings) {
   const values = {
     label,
     node: findNodeExecutable(),
@@ -60,6 +85,7 @@ function plist() {
     projectRoot,
     stdout: join(logsDirectory, 'server.out.log'),
     stderr: join(logsDirectory, 'server.err.log'),
+    ...settings,
   };
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -80,9 +106,13 @@ function plist() {
     <key>NODE_ENV</key>
     <string>production</string>
     <key>HOST</key>
-    <string>127.0.0.1</string>
+    <string>${escapeXml(values.host)}</string>
     <key>PORT</key>
-    <string>4173</string>
+    <string>${escapeXml(values.port)}</string>
+    <key>TURNER_PUBLIC_ORIGIN</key>
+    <string>${escapeXml(values.publicOrigin)}</string>
+    <key>TURNER_INDEXABLE</key>
+    <string>${values.indexable ? 'true' : 'false'}</string>
   </dict>
   <key>RunAtLoad</key>
   <true/>
@@ -102,18 +132,22 @@ function plist() {
 }
 
 async function install() {
+  const settings = serviceSettings();
   await mkdir(launchAgentsDirectory, { recursive: true, mode: 0o700 });
   await mkdir(logsDirectory, { recursive: true, mode: 0o700 });
-  await writeFile(agentPath, plist(), { encoding: 'utf8', mode: 0o600 });
+  await writeFile(agentPath, plist(settings), { encoding: 'utf8', mode: 0o600 });
   await chmod(agentPath, 0o600);
 
   launchctl(['bootout', service], { allowMissing: true });
-  launchctl(['bootstrap', domain, agentPath]);
+  await bootstrapAgent();
   launchctl(['enable', service]);
   launchctl(['kickstart', '-k', service]);
 
   console.log(`Installed and started ${label}.`);
   console.log(`LaunchAgent: ${agentPath}`);
+  console.log(`Endpoint: http://${settings.host}:${settings.port}`);
+  console.log(`Public origin: ${settings.publicOrigin}`);
+  console.log(`Indexable: ${settings.indexable}`);
   console.log(`Logs: ${logsDirectory}`);
 }
 

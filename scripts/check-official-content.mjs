@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { renderModelPage } from '../lib/seo-pages.mjs';
 
 const content = JSON.parse(await readFile(new URL('../data/official-content.json', import.meta.url), 'utf8'));
 
@@ -19,8 +20,15 @@ for (const model of content.models) {
   ids.add(model.id);
   assert(model.name && model.type && model.styles.length > 0, `Incomplete identity for ${model.id}`);
   assert(model.area > 0 && model.bedrooms > 0 && model.bathrooms > 0 && model.floors > 0, `Invalid specifications for ${model.id}`);
-  assert(model.image.startsWith('https://maisonsturner.ca/'), `Untrusted image source for ${model.id}`);
+  assert(model.imageUrl.startsWith('https://maisonsturner.ca/'), `Untrusted image source for ${model.id}`);
+  assert(!('image' in model) && !('remoteImage' in model) && !('localImage' in model), `Legacy duplicate image fields remain for ${model.id}`);
   assert(model.sourceUrl === `https://maisonsturner.ca/modeles/${model.id}`, `Unexpected source URL for ${model.id}`);
+  const seoHtml = renderModelPage({ model, content, publicOrigin: 'https://preview.example.com', indexable: true });
+  const title = seoHtml.match(/<title>(.*?)<\/title>/)?.[1] || '';
+  const description = seoHtml.match(/<meta name="description" content="(.*?)">/)?.[1] || '';
+  assert(title.length > 30 && title.length <= 65, `SEO title length is invalid for ${model.id}: ${title.length}`);
+  assert(description.length > 70 && description.length <= 160, `SEO description length is invalid for ${model.id}: ${description.length}`);
+  assert((seoHtml.match(/<h1\b/g) || []).length === 1, `SSR model page does not have exactly one H1: ${model.id}`);
 }
 
 const expectedFeatured = {

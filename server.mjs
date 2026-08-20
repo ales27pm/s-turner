@@ -4,18 +4,22 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gunzip } from 'node:zlib';
 import { promisify } from 'node:util';
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
+import { parseDirectory, parseFlag, parseHost, parseHttpUrl, parseOrigin, parsePort } from './scripts/runtime-config.mjs';
+import { buildSitemapXml, renderCatalogPage, renderModelPage } from './lib/seo-pages.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
-const officialContent = JSON.parse(await readFile(join(root, 'data', 'official-content.json'), 'utf8'));
-const port = Number(process.env.PORT || 4173);
-const host = process.env.HOST || '127.0.0.1';
+const port = parsePort(process.env.PORT);
+const host = parseHost(process.env.HOST);
 const gunzipAsync = promisify(gunzip);
-const intakeDir = process.env.TURNER_DATA_DIR || join(root, '.turner-data');
+const intakeDir = parseDirectory(process.env.TURNER_DATA_DIR, { name: 'TURNER_DATA_DIR', fallback: join(root, '.turner-data') });
 const intakeFile = join(intakeDir, 'project-intake.jsonl');
 const adminToken = process.env.TURNER_ADMIN_TOKEN || '';
-const crmWebhookUrl = process.env.TURNER_CRM_WEBHOOK_URL || '';
-const fallbackOnly = process.env.TURNER_FALLBACK_ONLY === '1';
+const crmWebhookUrl = parseHttpUrl(process.env.TURNER_CRM_WEBHOOK_URL, { name: 'TURNER_CRM_WEBHOOK_URL', optional: true });
+const fallbackOnly = parseFlag(process.env.TURNER_FALLBACK_ONLY, { name: 'TURNER_FALLBACK_ONLY' });
+const publicOrigin = parseOrigin(process.env.TURNER_PUBLIC_ORIGIN, { name: 'TURNER_PUBLIC_ORIGIN', fallback: 'https://maisonsturner.ca' });
+const indexable = parseFlag(process.env.TURNER_INDEXABLE, { name: 'TURNER_INDEXABLE', fallback: true });
+const officialContent = JSON.parse(await readFile(join(root, 'data', 'official-content.json'), 'utf8'));
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
@@ -64,6 +68,10 @@ const preloadVisuals = [
   'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg',
 ];
 
+const seoTitle = 'Maisons usinées au Québec | Maisons S. Turner';
+const seoDescription = `Découvrez ${officialContent.models.length} modèles de maisons et chalets usinés personnalisables, fabriqués au Québec par Maisons S. Turner, avec un accompagnement clair du terrain aux clés.`;
+const seoImage = preloadVisuals[0];
+
 const visualBaseline = {
   mode: 'restored-rich-layout',
   payload: 'original-b371',
@@ -88,6 +96,8 @@ const implementationStatus = {
     'diagnostics expose remaining prototype-only pieces through /api/implementation-status',
     `${officialContent.models.length} official model sheets are synchronized from the Turner sitemap with source provenance`,
     'official process, FAQ, module components, contact hours and verification links are included in the rendered application',
+    'server-rendered SEO metadata, structured data, robots.txt and sitemap.xml are available without client-side JavaScript',
+    `${officialContent.models.length} model pages and the catalogue index are rendered as crawlable HTML`,
   ],
   stillPrototype: [
     'budget values are still user-entered or sample values, not official pricing',
@@ -123,8 +133,40 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+function publicUrl(pathname = '/') {
+  return new URL(pathname, `${publicOrigin}/`).href;
+}
+
 function hashForLog(value) {
   return createHash('sha256').update(String(value)).digest('hex').slice(0, 16);
+}
+
+function tokenMatches(expected, provided) {
+  if (!expected || !provided) return false;
+  const expectedHash = createHash('sha256').update(expected).digest();
+  const providedHash = createHash('sha256').update(provided).digest();
+  return timingSafeEqual(expectedHash, providedHash);
+}
+
+function hasAdminAccess(req) {
+  const authorization = String(req.headers.authorization || '');
+  return authorization.startsWith('Bearer ') && tokenMatches(adminToken, authorization.slice(7));
+}
+
+function hasAllowedBrowserOrigin(req) {
+  const fetchSite = String(req.headers['sec-fetch-site'] || '').toLowerCase();
+  if (fetchSite === 'cross-site') return false;
+  const originHeader = String(req.headers.origin || '').trim();
+  if (!originHeader) return true;
+  let origin;
+  try {
+    origin = new URL(originHeader);
+  } catch {
+    return false;
+  }
+  if (!['http:', 'https:'].includes(origin.protocol)) return false;
+  const requestHost = String(req.headers.host || '').trim().toLowerCase();
+  return Boolean(requestHost) && origin.host.toLowerCase() === requestHost;
 }
 
 function clientIp(req) {
@@ -162,8 +204,8 @@ async function readBody(req, maxBytes = jsonMaxBytes) {
 
 async function readJson(req) {
   const type = String(req.headers['content-type'] || '');
-  if (!type.includes('application/json')) throw Object.assign(new Error('Expected application/json'), { status: 415 });
   const text = await readBody(req);
+  if (!type.includes('application/json')) throw Object.assign(new Error('Expected application/json'), { status: 415 });
   try {
     const parsed = JSON.parse(text || '{}');
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Expected a JSON object');
@@ -295,7 +337,7 @@ function calculateBudget(input = {}) {
 
 async function handleProjectIntake(req, res) {
   if (req.method === 'GET' || req.method === 'HEAD') {
-    if (!adminToken || req.headers.authorization !== `Bearer ${adminToken}`) return sendJson(res, 403, { ok: false, error: 'Admin token required.' });
+    if (!hasAdminAccess(req)) return sendJson(res, 403, { ok: false, error: 'Admin token required.' });
     let text;
     try {
       text = await readFile(intakeFile, 'utf8');
@@ -308,9 +350,9 @@ async function handleProjectIntake(req, res) {
   }
 
   if (req.method !== 'POST') return methodNotAllowed(res, ['GET', 'HEAD', 'POST']);
-  if (!checkRateLimit(req, 'project-intake')) return sendJson(res, 429, { ok: false, error: 'Trop de demandes. Réessayez dans quelques minutes.' });
-
   const payload = await readJson(req);
+  if (!hasAllowedBrowserOrigin(req)) return sendJson(res, 403, { ok: false, error: 'Cross-origin browser submissions are not allowed.' });
+  if (!checkRateLimit(req, 'project-intake')) return sendJson(res, 429, { ok: false, error: 'Trop de demandes. Réessayez dans quelques minutes.' });
   const { intake, errors } = validateIntake(payload);
   if (errors.length) return sendJson(res, 422, { ok: false, errors });
 
@@ -319,6 +361,7 @@ async function handleProjectIntake(req, res) {
     receivedAt: new Date().toISOString(),
     intake,
     budget: payload.budget ? calculateBudget(payload.budget) : null,
+    privacy: { rawIpStored: false, ipHashApplied: true },
     meta: { ipHash: hashForLog(clientIp(req)), userAgent: normalizeString(req.headers['user-agent'], 240), referer: normalizeString(req.headers.referer, 300) },
   };
 
@@ -338,7 +381,7 @@ function apiConfig() {
     ok: true,
     brand: officialContent.company.name,
     contact: officialContent.company,
-    content: { verifiedAt: officialContent.verifiedAt, models: officialContent.models.length, sources: officialContent.sources },
+    content: { verifiedAt: officialContent.verifiedAt, models: officialContent.models.length, sources: officialContent.sources, publicOrigin, indexable },
     capabilities: { projectIntake: true, localPersistence: true, crmWebhook: Boolean(crmWebhookUrl), budgetSummaryApi: true, adminListing: Boolean(adminToken), primaryClient: !fallbackOnly, runtimeFallbacks: true, officialContentSnapshot: true },
   };
 }
@@ -383,8 +426,11 @@ function patchClientJs(source) {
   output = replaceClientArray(output, 'inclusionGroups', officialContent.inclusionGroups);
   output = output
     .replace('loading="eager"', 'loading="lazy"')
+    .replace('const source = escapeHTML(model.localImage);', 'const source = escapeHTML(model.imageUrl);')
     .replace("if (state.filters.style && model.style !== state.filters.style) return false;", "if (state.filters.style && !(model.styles || [model.style]).includes(state.filters.style)) return false;")
     .replace("'Tous les modèles du prototype'", "'Catalogue officiel vérifié'")
+    .replace('<button class="details-button" type="button" data-model-id="${model.id}">Voir le modèle →</button>', '<a class="details-button" href="/modeles/${escapeHTML(model.id)}/">Voir le modèle →</a>')
+    .replace('models: models.map(({ remoteImage, localImage, ...model }) => model),', 'models: models.map((model) => ({ ...model })),')
     .replace('href="https://maisonsturner.ca/modeles/${model.id}"', 'href="${escapeHTML(model.sourceUrl)}"')
     .replace('La comparaison porte sur les données publiques utilisées dans ce prototype. Un conseiller doit confirmer les options et modifications possibles.', 'La comparaison porte sur les spécifications publiées par Turner. Les options doivent être confirmées avec un conseiller.');
   return output;
@@ -393,6 +439,96 @@ function patchClientJs(source) {
 function baselineHeadMarkup() {
   const baselineJson = JSON.stringify({ ...visualBaseline, preloadVisuals }).replaceAll('</script', '<\\/script');
   return `\n<meta name="turner-baseline" content="${escapeHtml(`${visualBaseline.mode}/${visualBaseline.payload}`)}">\n<meta name="turner-content-verified-at" content="${escapeHtml(officialContent.verifiedAt)}">\n<link rel="preconnect" href="https://maisonsturner.ca" crossorigin>\n<link rel="dns-prefetch" href="//maisonsturner.ca">\n<link rel="preload" as="image" href="${escapeHtml(preloadVisuals[0])}" fetchpriority="high">\n<script>window.__TURNER_BASELINE__=${baselineJson};</script>`;
+}
+
+function seoHeadMarkup() {
+  const canonical = publicUrl('/');
+  const businessId = `${canonical}#business`;
+  const websiteId = `${canonical}#website`;
+  const structuredData = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'HomeAndConstructionBusiness',
+        '@id': businessId,
+        name: officialContent.company.name,
+        alternateName: 'Maisons S. Turner',
+        url: canonical,
+        image: seoImage,
+        description: seoDescription,
+        foundingDate: officialContent.company.foundedOn,
+        telephone: '+1-819-377-0570',
+        email: officialContent.company.email,
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: '1021, rue des Ateliers',
+          addressLocality: 'Trois-Rivières',
+          addressRegion: 'QC',
+          postalCode: 'G9B 7J5',
+          addressCountry: 'CA',
+        },
+        areaServed: { '@type': 'AdministrativeArea', name: 'Québec' },
+        openingHoursSpecification: [
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], opens: '09:00', closes: '16:30' },
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Friday', opens: '09:00', closes: '16:00' },
+          { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '12:00', closes: '16:00' },
+        ],
+        sameAs: ['https://maisonsturner.ca/'],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        url: canonical,
+        name: 'Maisons S. Turner',
+        inLanguage: 'fr-CA',
+        publisher: { '@id': businessId },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${canonical}#faq`,
+        url: `${canonical}#faq`,
+        inLanguage: 'fr-CA',
+        mainEntity: officialContent.faqItems.map(item => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      },
+    ],
+  }).replaceAll('<', '\\u003c');
+  return `<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">
+<link rel="canonical" href="${escapeHtml(canonical)}">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_CA">
+<meta property="og:site_name" content="Maisons S. Turner">
+<meta property="og:title" content="${escapeHtml(seoTitle)}">
+<meta property="og:description" content="${escapeHtml(seoDescription)}">
+<meta property="og:url" content="${escapeHtml(canonical)}">
+<meta property="og:image" content="${escapeHtml(seoImage)}">
+<meta property="og:image:alt" content="Maison usinée contemporaine de Maisons S. Turner">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${escapeHtml(seoTitle)}">
+<meta name="twitter:description" content="${escapeHtml(seoDescription)}">
+<meta name="twitter:image" content="${escapeHtml(seoImage)}">
+<script type="application/ld+json">${structuredData}</script>`;
+}
+
+function enhanceSeo(html) {
+  const originalHeading = '<h1 id="hero-title">Votre maison.<br />Vos choix.<br /><span>Un prix qui tient la route.</span></h1>';
+  if (!html.includes(originalHeading)) throw new Error('The primary hero heading could not be updated safely.');
+  return html
+    .replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(seoTitle)}</title>`)
+    .replace(/<meta\s+name=["']description["'][^>]*>/i, `<meta name="description" content="${escapeHtml(seoDescription)}">`)
+    .replace(originalHeading, '<h1 id="hero-title">Maisons usinées<br />personnalisées<br /><span>au Québec.</span></h1>');
+}
+
+function robotsText() {
+  if (!indexable) return 'User-agent: *\nDisallow: /\n';
+  return `User-agent: *\nAllow: /\nSitemap: ${publicUrl('/sitemap.xml')}\n`;
+}
+
+function sitemapXml() {
+  return buildSitemapXml({ content: officialContent, publicOrigin });
 }
 
 function enhanceCompare(html) {
@@ -443,7 +579,7 @@ function enhanceOfficialContent(html) {
   html = html.replace(/<section class="certifications"[\s\S]*?<\/section>/, certificationMarkup);
 
   html = html
-    .replace('<span id="result-count">6 modèles</span>\n          <p id="active-filter-copy">Tous les modèles du prototype</p>', `<span id="result-count">${officialContent.models.length} modèles</span>\n          <p id="active-filter-copy">Catalogue officiel vérifié</p>\n          <p class="official-content-note">Fiches synchronisées le ${escapeHtml(verifiedLabel)} · <a href="${escapeHtml(officialContent.sources.modelSitemap)}" target="_blank" rel="noreferrer">Source Turner</a></p>`)
+    .replace('<span id="result-count">6 modèles</span>\n          <p id="active-filter-copy">Tous les modèles du prototype</p>', `<span id="result-count">${officialContent.models.length} modèles</span>\n          <p id="active-filter-copy">Catalogue officiel vérifié</p>\n          <p class="official-content-note">Fiches synchronisées le ${escapeHtml(verifiedLabel)} · <a href="/modeles/">Toutes les fiches</a> · <a href="${escapeHtml(officialContent.sources.modelSitemap)}" target="_blank" rel="noreferrer">Source Turner</a></p>`)
     .replace('aria-label="Visualisation conceptuelle d’une maison contemporaine"', 'aria-label="Maison modèle Athènes publiée par Maisons S. Turner"')
     .replace('alt="Maison modulaire contemporaine au bord d’un lac dans un paysage boisé québécois"', 'alt="Maison modèle Athènes dans un paysage boisé"')
     .replace('<div><strong>1021, rue des Ateliers</strong><span>Trois-Rivières, Québec G9B 7J5</span></div>', `<div><strong>1021, rue des Ateliers</strong><span>Trois-Rivières, Québec G9B 7J5</span></div><div class="contact-hours"><strong>Lun–jeu 9 h–16 h 30 · ven 9 h–16 h</strong><span>Samedi 12 h–16 h · dimanche fermé · sur rendez-vous</span><a href="${escapeHtml(officialContent.sources.contact)}" target="_blank" rel="noreferrer">Confirmer les heures</a></div>`)
@@ -462,8 +598,8 @@ const fallbackCss = `
 /* Completion layer: only fills missing original-runtime sections. */
 .form-status[data-state="pending"]{color:var(--muted,#64707a)}.form-status[data-state="error"]{color:#a2382b}.form-status[data-state="success"]{color:var(--success,#26734d)}
 .official-content-note{margin-top:4px;font-size:.78rem;color:var(--muted,#64707a)}.official-content-note a,.contact-hours a,.consent a{color:inherit;text-decoration:underline;text-underline-offset:3px}.certification-grid article a{display:flex;flex-direction:column;justify-content:center;width:100%;height:100%;color:inherit;text-decoration:none}.certification-grid article small{margin-top:5px;font-size:.68rem;text-transform:uppercase}.certification-note{padding-top:12px;padding-bottom:18px;font-size:.78rem;line-height:1.5}.model-card,.turner-fallback-card{content-visibility:auto;contain-intrinsic-size:520px}.contact-hours a{min-height:32px;margin-top:4px;font-size:.75rem}
-.brand,.compare-toggle,.details-button,.quote-button,.text-button,.turner-fallback-actions button{min-height:44px}.consent{min-height:44px}.consent input[type="checkbox"]{min-width:18px;min-height:18px}.range-field input[type="range"]{min-height:44px;touch-action:pan-y}@media(max-width:720px){footer a,footer button{display:flex;align-items:center;min-height:44px}.compare-mini-button,.compare-return{min-height:44px}.faq-question{grid-template-columns:34px minmax(0,1fr) 48px}.faq-plus{justify-self:center}}
-.turner-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}.turner-fallback-models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:18px 0 40px}.turner-fallback-card{background:var(--white,#fff);border:1px solid var(--border,#eadfd4);border-radius:8px;overflow:hidden;box-shadow:0 14px 36px rgba(9,31,44,.09)}.turner-fallback-card img{width:100%;height:190px;object-fit:cover}.turner-fallback-card-body{padding:16px}.turner-fallback-card h3{font-family:var(--display-font,Georgia,serif);font-size:1.7rem;margin:.2rem 0}.turner-fallback-card p{color:var(--muted,#64707a);margin:.25rem 0 .8rem}.turner-fallback-tag{display:inline-flex;margin-top:-38px;margin-left:12px;position:relative;z-index:1;background:rgba(9,31,44,.88);color:white;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:800}.turner-fallback-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.turner-fallback-specs span{background:var(--cream,#f6f1ea);border-radius:8px;padding:9px;text-align:center;font-size:.78rem}.turner-fallback-actions{display:flex;gap:8px}.turner-fallback-actions button{min-height:44px;border:1px solid var(--copper,#bd6740);border-radius:8px;background:white;color:var(--copper,#bd6740);font-weight:800;padding:0 13px}.turner-fallback-panel,.turner-fallback-faq{border:1px solid var(--border,#eadfd4);border-radius:8px;background:white;padding:22px;margin-top:14px}.turner-fallback-panel h3{font-family:var(--display-font,Georgia,serif);font-size:2rem;margin:.2rem 0}.turner-fallback-panel ul{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}.turner-fallback-panel li{background:var(--cream,#f6f1ea);border-radius:8px;padding:10px}.turner-fallback-faq details{border:1px solid var(--border,#eadfd4);border-radius:8px;background:white;margin:10px 0;overflow:hidden}.turner-fallback-faq summary{cursor:pointer;font-weight:900;padding:15px 16px}.turner-fallback-faq p{padding:0 16px 16px;margin:0;color:var(--muted,#64707a);line-height:1.5}.turner-toast{position:fixed;z-index:500;left:16px;right:16px;bottom:16px;background:#071b27;color:white;border-radius:8px;padding:13px 16px;text-align:center;box-shadow:0 16px 44px rgba(0,0,0,.24)}html{scroll-behavior:smooth}body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.hero h1,.title,.section-title,.display{text-wrap:balance}body.turner-compare-visible{padding-bottom:96px}@media(max-width:720px){.turner-fallback-models{grid-template-columns:1fr}.turner-fallback-card img{height:210px}body.turner-compare-visible{padding-bottom:128px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+.brand,.compare-toggle,.details-button,.quote-button,.text-button,.turner-fallback-actions button,.turner-fallback-actions a{min-height:44px}.model-actions a.details-button{display:inline-flex;align-items:center;font-size:.78rem;font-weight:780;text-decoration:none}.model-actions a.details-button:hover{text-decoration:underline;text-underline-offset:4px}.consent{min-height:44px}.consent input[type="checkbox"]{min-width:18px;min-height:18px}.range-field input[type="range"]{min-height:44px;touch-action:pan-y}@media(max-width:720px){footer a,footer button{display:flex;align-items:center;min-height:44px}.compare-mini-button,.compare-return{min-height:44px}.faq-question{grid-template-columns:34px minmax(0,1fr) 48px}.faq-plus{justify-self:center}}
+.turner-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}.turner-fallback-models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:18px 0 40px}.turner-fallback-card{background:var(--white,#fff);border:1px solid var(--border,#eadfd4);border-radius:8px;overflow:hidden;box-shadow:0 14px 36px rgba(9,31,44,.09)}.turner-fallback-card img{width:100%;height:190px;object-fit:cover}.turner-fallback-card-body{padding:16px}.turner-fallback-card h3{font-family:var(--display-font,Georgia,serif);font-size:1.7rem;margin:.2rem 0}.turner-fallback-card p{color:var(--muted,#64707a);margin:.25rem 0 .8rem}.turner-fallback-tag{display:inline-flex;margin-top:-38px;margin-left:12px;position:relative;z-index:1;background:rgba(9,31,44,.88);color:white;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:800}.turner-fallback-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.turner-fallback-specs span{background:var(--cream,#f6f1ea);border-radius:8px;padding:9px;text-align:center;font-size:.78rem}.turner-fallback-actions{display:flex;gap:8px}.turner-fallback-actions button,.turner-fallback-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--copper,#bd6740);border-radius:8px;background:white;color:var(--copper,#bd6740);font-weight:800;padding:0 13px;text-decoration:none}.turner-fallback-panel,.turner-fallback-faq{border:1px solid var(--border,#eadfd4);border-radius:8px;background:white;padding:22px;margin-top:14px}.turner-fallback-panel h3{font-family:var(--display-font,Georgia,serif);font-size:2rem;margin:.2rem 0}.turner-fallback-panel ul{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}.turner-fallback-panel li{background:var(--cream,#f6f1ea);border-radius:8px;padding:10px}.turner-fallback-faq details{border:1px solid var(--border,#eadfd4);border-radius:8px;background:white;margin:10px 0;overflow:hidden}.turner-fallback-faq summary{cursor:pointer;font-weight:900;padding:15px 16px}.turner-fallback-faq p{padding:0 16px 16px;margin:0;color:var(--muted,#64707a);line-height:1.5}.turner-toast{position:fixed;z-index:500;left:16px;right:16px;bottom:16px;background:#071b27;color:white;border-radius:8px;padding:13px 16px;text-align:center;box-shadow:0 16px 44px rgba(0,0,0,.24)}html{scroll-behavior:smooth}body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.hero h1,.title,.section-title,.display{text-wrap:balance}body.turner-compare-visible{padding-bottom:96px}@media(max-width:720px){.turner-fallback-models{grid-template-columns:1fr}.turner-fallback-card img{height:210px}body.turner-compare-visible{padding-bottom:128px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 `;
 
 function completionJs() {
@@ -481,7 +617,7 @@ function completionJs() {
     const number = new Intl.NumberFormat('fr-CA');
     const currency = new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
     const fallbackCompared = new Set();
-    const text = n => (n?.textContent || '').replace(/\s+/g, ' ').trim();
+    const text = n => (n?.textContent || '').replace(/\\s+/g, ' ').trim();
     const sectionContaining = (...needles) => $$('section, main > div, main').find(node => needles.every(n => text(node).toLowerCase().includes(n.toLowerCase())));
     const escapeText = value => String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
     const toast = msg => {
@@ -534,7 +670,7 @@ function completionJs() {
       const grid = document.createElement('div');
       grid.className = 'turner-fallback-models';
       grid.dataset.turnerFallbackModels = 'true';
-      grid.innerHTML = models.map(m => '<article class="turner-fallback-card" data-turner-fallback-model="'+escapeText(m.id)+'" data-type="'+escapeText(m.type)+'" data-styles="'+escapeText(m.styles.join('|'))+'" data-bedrooms="'+m.bedrooms+'" data-garage="'+String(m.garage)+'" data-area="'+m.area+'"><img src="'+escapeText(m.image)+'" alt="Modèle '+escapeText(m.name)+'" loading="lazy"><span class="turner-fallback-tag">'+escapeText(m.type)+' · '+escapeText(m.style)+'</span><div class="turner-fallback-card-body"><div style="display:flex;justify-content:space-between;gap:12px"><h3>'+escapeText(m.name)+'</h3><strong>'+number.format(m.area)+' pi²</strong></div><p>'+escapeText(m.description)+'</p><div class="turner-fallback-specs"><span><b>'+m.bedrooms+'</b><br>Ch.</span><span><b>'+m.bathrooms+'</b><br>S.B.</span><span><b>'+(m.garage?'Oui':'Non')+'</b><br>Garage</span></div><div class="turner-fallback-actions"><button type="button" data-turner-fallback-detail="'+escapeText(m.id)+'">Voir le modèle</button><button type="button" aria-pressed="false" data-turner-fallback-compare="'+escapeText(m.id)+'">Comparer</button></div></div></article>').join('');
+      grid.innerHTML = models.map(m => '<article class="turner-fallback-card" data-turner-fallback-model="'+escapeText(m.id)+'" data-type="'+escapeText(m.type)+'" data-styles="'+escapeText(m.styles.join('|'))+'" data-bedrooms="'+m.bedrooms+'" data-garage="'+String(m.garage)+'" data-area="'+m.area+'"><img src="'+escapeText(m.imageUrl)+'" alt="Modèle '+escapeText(m.name)+'" loading="lazy"><span class="turner-fallback-tag">'+escapeText(m.type)+' · '+escapeText(m.style)+'</span><div class="turner-fallback-card-body"><div style="display:flex;justify-content:space-between;gap:12px"><h3>'+escapeText(m.name)+'</h3><strong>'+number.format(m.area)+' pi²</strong></div><p>'+escapeText(m.description)+'</p><div class="turner-fallback-specs"><span><b>'+m.bedrooms+'</b><br>Ch.</span><span><b>'+m.bathrooms+'</b><br>S.B.</span><span><b>'+(m.garage?'Oui':'Non')+'</b><br>Garage</span></div><div class="turner-fallback-actions"><a href="/modeles/'+escapeText(m.id)+'/">Voir la fiche</a><button type="button" aria-pressed="false" data-turner-fallback-compare="'+escapeText(m.id)+'">Comparer</button></div></div></article>').join('');
       const marker = $('.catalog-toolbar', section) || section;
       if (marker === section) section.appendChild(grid); else marker.insertAdjacentElement('afterend', grid);
     }
@@ -694,20 +830,13 @@ function completionJs() {
       else fallbackCompared.add(id);
       updateFallbackCompareUi();
     }
-    function openFallbackDetail(id) {
-      const model = modelById(id);
-      const content = $('#model-dialog-content');
-      if (!model || !content) return;
-      content.innerHTML = '<div class="model-dialog-hero"><img src="'+escapeText(model.image)+'" alt="Modèle '+escapeText(model.name)+'"><div class="model-dialog-heading"><span>'+escapeText(model.type)+' · '+escapeText(model.style)+'</span><h2 id="model-dialog-title">'+escapeText(model.name)+'</h2></div></div><div class="model-dialog-body"><div><p>'+escapeText(model.description)+'</p><ul class="dialog-features">'+model.features.map(feature => '<li>'+escapeText(feature)+'</li>').join('')+'</ul></div><div><div class="dialog-spec-grid"><div><strong>'+model.bedrooms+'</strong><span>Chambre'+(model.bedrooms>1?'s':'')+'</span></div><div><strong>'+model.bathrooms+'</strong><span>Salle de bain</span></div><div><strong>'+model.floors+'</strong><span>Étage</span></div><div><strong>'+(model.garage?'Oui':'Non')+'</strong><span>Garage</span></div><div><strong>'+number.format(model.area)+'</strong><span>Superficie en pi²</span></div><div><strong>'+escapeText(model.style)+'</strong><span>Style</span></div></div><div class="dialog-actions"><button class="button button-primary" type="button" data-turner-fallback-quote="'+escapeText(model.id)+'">Préparer une demande</button><a class="button button-secondary" href="'+escapeText(model.sourceUrl)+'" target="_blank" rel="noreferrer">Voir la fiche Turner</a></div></div></div>';
-      openDialog($('#model-dialog'));
-    }
     function openFallbackCompare() {
       const selected = models.filter(model => fallbackCompared.has(model.id));
       if (selected.length < 2) return toast('Sélectionnez au moins deux modèles.');
       const content = $('#compare-dialog-content');
       if (!content) return;
       const rows = [['Type',model=>model.type],['Style',model=>model.style],['Superficie',model=>number.format(model.area)+' pi²'],['Chambres',model=>model.bedrooms],['Salles de bain',model=>model.bathrooms],['Garage',model=>model.garage?'Oui':'Non'],['Points forts',model=>model.features.join(' · ')]];
-      content.innerHTML = '<div class="compare-dialog-content"><h2 id="compare-dialog-title">Comparer sans se perdre.</h2><p>La comparaison porte sur les spécifications publiées par Turner. Les options doivent être confirmées avec un conseiller.</p><div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Critère</th>'+selected.map(model=>'<th><img class="compare-image" src="'+escapeText(model.image)+'" alt="">'+escapeText(model.name)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr><th>'+escapeText(row[0])+'</th>'+selected.map(model=>'<td>'+escapeText(row[1](model))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div></div>';
+      content.innerHTML = '<div class="compare-dialog-content"><h2 id="compare-dialog-title">Comparer sans se perdre.</h2><p>La comparaison porte sur les spécifications publiées par Turner. Les options doivent être confirmées avec un conseiller.</p><div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Critère</th>'+selected.map(model=>'<th><img class="compare-image" src="'+escapeText(model.imageUrl)+'" alt="">'+escapeText(model.name)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr><th>'+escapeText(row[0])+'</th>'+selected.map(model=>'<td>'+escapeText(row[1](model))+'</td>').join('')+'</tr>').join('')+'</tbody></table></div></div>';
       openDialog($('#compare-dialog'));
     }
     function prepareFallbackQuote(id) {
@@ -769,7 +898,7 @@ function completionJs() {
         });
       });
     }
-    function run() { ensureModelOptions(); ensureModelFallback(); ensureProjectFallback(); ensureFaqFallback(); ensureFallbackShell(); applyFallbackFilters(); wireForms(); compareSync(); }
+    function initialize() { ensureModelOptions(); ensureModelFallback(); ensureProjectFallback(); ensureFaqFallback(); ensureFallbackShell(); applyFallbackFilters(); wireForms(); compareSync(); }
     document.addEventListener('click', event => {
       if (!window.TurnerPrototype) {
         const menuToggle = event.target.closest('[data-menu-toggle]');
@@ -801,8 +930,6 @@ function completionJs() {
         if (event.target.closest('#copy-summary')) copyFallbackBudget();
         if (event.target.closest('[data-open-inclusions]')) { ensureFallbackInclusions(); openDialog($('#inclusions-dialog')); }
       }
-      const fallbackDetail = event.target.closest('[data-turner-fallback-detail]');
-      if (fallbackDetail) openFallbackDetail(fallbackDetail.dataset.turnerFallbackDetail);
       const fallbackCompare = event.target.closest('[data-turner-fallback-compare]');
       if (fallbackCompare) toggleFallbackCompare(fallbackCompare.dataset.turnerFallbackCompare);
       const fallbackRemove = event.target.closest('[data-remove-fallback-compare]');
@@ -816,10 +943,9 @@ function completionJs() {
       if (event.target.closest('#hide-compare')) { const tray=$('#compare-tray'), show=$('#show-compare'); if (tray && show) { tray.hidden=true; show.hidden=false; compareSync(); } }
       if (event.target.closest('#show-compare')) { const tray=$('#compare-tray'), show=$('#show-compare'); if (tray && show) { tray.hidden=false; show.hidden=true; compareSync(); } }
       if (event.target.closest('#clear-compare')) { let remove=$('[data-remove-compare]'), guard=0; while(remove && guard++<10){remove.click();remove=$('[data-remove-compare]');} fallbackCompared.clear(); updateFallbackCompareUi(); const tray=$('#compare-tray'), show=$('#show-compare'); if (tray) tray.hidden=true; if (show) show.hidden=true; compareSync(); }
-      queueMicrotask(run);
+      if (window.TurnerPrototype && event.target.closest('[data-compare-id], [data-remove-compare]')) queueMicrotask(compareSync);
     });
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true }); else run();
-    setTimeout(run, 120); setTimeout(run, 800); setTimeout(run, 1800);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true }); else initialize();
   })();`;
 }
 
@@ -829,13 +955,13 @@ async function renderApp() {
     gunzipText('payload/styles.css.gz'),
     gunzipText('payload/app.js.gz'),
   ]);
-  let html = rawHtml.replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, '');
+  let html = enhanceSeo(rawHtml.replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, ''));
   html = enhanceOfficialContent(enhanceContact(enhanceCompare(patchVisualUrls(html))));
   const css = patchVisualUrls(rawCss);
   const safeJs = fallbackOnly ? '' : patchVisualUrls(patchClientJs(rawJs)).replaceAll('</script>', '<\\/script>');
   const completeJs = completionJs().replaceAll('</script>', '<\\/script>');
   return html
-    .replace('</head>', () => `${baselineHeadMarkup()}\n<style>${css}\n${compareCss}\n${fallbackCss}</style></head>`)
+    .replace('</head>', () => `${seoHeadMarkup()}\n${baselineHeadMarkup()}\n<style>${css}\n${compareCss}\n${fallbackCss}</style></head>`)
     .replace('</body>', () => `${safeJs ? `<script>${safeJs}</script>` : ''}<script>${completeJs}</script></body>`);
 }
 
@@ -875,6 +1001,7 @@ async function health() {
     visuals: { sourceMapEntries: visualSourceMap.size, highResolutionTurnerSources: true, preloadCount: preloadVisuals.length, preloadedHero: preloadVisuals[0] },
     implementations: implementationStatus,
     officialContent: { verifiedAt: officialContent.verifiedAt, models: officialContent.models.length, sources: officialContent.sources },
+    seo: { title: seoTitle, description: seoDescription, publicOrigin, indexable, canonical: publicUrl('/'), robots: publicUrl('/robots.txt'), sitemap: publicUrl('/sitemap.xml'), structuredData: true, crawlableModelPages: officialContent.models.length },
     completionLayer: { primaryClientEnabled: !fallbackOnly, modelFallbacks: fallbackModels.length, projectFallback: true, faqFallback: true, contactApiBridge: true },
     decoded: { html: html.length, css: css.length, js: js.length },
     pid: process.pid,
@@ -889,13 +1016,22 @@ const server = http.createServer(async (req, res) => {
     if (route === '__health') return isReadRequest(req) ? sendJson(res, 200, await health()) : methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === '__baseline') return isReadRequest(req) ? sendJson(res, 200, visualBaseline) : methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === '__visuals') return isReadRequest(req) ? sendJson(res, 200, { sourceMap: [...visualSourceMap.entries()], preloadVisuals }) : methodNotAllowed(res, ['GET', 'HEAD']);
+    if (route === 'robots.txt') return isReadRequest(req) ? send(res, 200, robotsText(), 'text/plain; charset=utf-8', 'public, max-age=3600') : methodNotAllowed(res, ['GET', 'HEAD']);
+    if (route === 'sitemap.xml') return isReadRequest(req) ? send(res, 200, sitemapXml(), 'application/xml; charset=utf-8', 'public, max-age=3600') : methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === 'api/config') return isReadRequest(req) ? sendJson(res, 200, apiConfig()) : methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === 'api/official-content') return isReadRequest(req) ? sendJson(res, 200, { ok: true, ...officialContent }) : methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === 'api/implementation-status') return isReadRequest(req) ? sendJson(res, 200, { ok: true, ...implementationStatus }) : methodNotAllowed(res, ['GET', 'HEAD']);
-    if (route === 'api/budget/summary') return handleBudgetSummary(req, res);
-    if (route === 'api/project-intake') return handleProjectIntake(req, res);
+    if (route === 'api/budget/summary') return await handleBudgetSummary(req, res);
+    if (route === 'api/project-intake') return await handleProjectIntake(req, res);
     if (!isReadRequest(req)) return methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === '' || route === 'index.html') return send(res, 200, await renderApp(), mime['.html']);
+    if (route === 'modeles' || route === 'modeles/') return send(res, 200, renderCatalogPage({ content: officialContent, publicOrigin, indexable }), mime['.html']);
+    const modelRoute = /^modeles\/([a-z0-9-]+)\/?$/.exec(route);
+    if (modelRoute) {
+      const model = officialContent.models.find(candidate => candidate.id === modelRoute[1]);
+      if (!model) return send(res, 404, 'Not found');
+      return send(res, 200, renderModelPage({ model, content: officialContent, publicOrigin, indexable }), mime['.html']);
+    }
 
     const filePath = safePath(req.url || '/');
     if (!filePath) return send(res, 400, 'Bad path');
@@ -919,5 +1055,26 @@ server.on('error', error => {
   }
   throw error;
 });
+
+let shuttingDown = false;
+function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`Received ${signal}; stopping the Turner server.`);
+  const timeout = setTimeout(() => {
+    console.error('Graceful shutdown timed out.');
+    process.exit(1);
+  }, 5000);
+  timeout.unref();
+  server.close(error => {
+    clearTimeout(timeout);
+    if (error) console.error(`Server shutdown failed: ${error.message}`);
+    process.exit(error ? 1 : 0);
+  });
+  server.closeIdleConnections?.();
+}
+
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+process.once('SIGINT', () => shutdown('SIGINT'));
 
 server.listen(port, host, () => console.log(`Maisons S. Turner app: http://${host}:${port}`));
