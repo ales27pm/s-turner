@@ -955,7 +955,10 @@ async function renderApp() {
     gunzipText('payload/styles.css.gz'),
     gunzipText('payload/app.js.gz'),
   ]);
-  let html = enhanceSeo(rawHtml.replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, ''));
+  const rawDocument = rawHtml
+    .replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, '')
+    .replace(/<link\s+rel=["']stylesheet["']\s+href=["']\.\/styles\.css["']\s*\/?>/gi, '');
+  let html = enhanceSeo(rawDocument);
   html = enhanceOfficialContent(enhanceContact(enhanceCompare(patchVisualUrls(html))));
   const css = patchVisualUrls(rawCss);
   const safeJs = fallbackOnly ? '' : patchVisualUrls(patchClientJs(rawJs)).replaceAll('</script>', '<\\/script>');

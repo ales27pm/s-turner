@@ -8,6 +8,10 @@ import { join } from 'node:path';
 const port = String(19000 + Math.floor(Math.random() * 1000));
 const host = '127.0.0.1';
 const baseUrl = `http://${host}:${port}`;
+const publicOriginArgument = process.argv.find(argument => argument.startsWith('--public-origin='));
+const publicOrigin = publicOriginArgument
+  ? new URL(publicOriginArgument.slice('--public-origin='.length)).origin
+  : baseUrl;
 const scratchDir = await mkdtemp(join(tmpdir(), 'turner-check-'));
 const dataDir = join(scratchDir, 'custom-data');
 const adminToken = 'turner-check-admin';
@@ -44,7 +48,7 @@ const server = spawn(process.execPath, ['server.mjs'], {
     TURNER_CRM_WEBHOOK_URL: crmWebhookUrl,
     TURNER_FALLBACK_ONLY: fallbackOnly ? '1' : '0',
     TURNER_INDEXABLE: indexable ? '1' : '0',
-    TURNER_PUBLIC_ORIGIN: baseUrl,
+    TURNER_PUBLIC_ORIGIN: publicOrigin,
   },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
@@ -126,10 +130,11 @@ try {
   assert(html.includes('window.__TURNER_BASELINE__='), 'Rendered baseline metadata is missing.');
   assert((html.match(/<h1\b/gi) || []).length === 1 && html.includes('Maisons usinées<br />personnalisées'), 'The server-rendered page does not have one descriptive H1.');
   assert(html.includes('<title>Maisons usinées au Québec | Maisons S. Turner</title>'), 'SEO title is missing or incorrect.');
-  assert(html.includes(`<link rel="canonical" href="${baseUrl}/">`), 'Canonical URL does not use the configured public origin.');
+  assert(html.includes(`<link rel="canonical" href="${publicOrigin}/">`), 'Canonical URL does not use the configured public origin.');
   assert(html.includes(`<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">`), 'Homepage robots metadata does not match TURNER_INDEXABLE.');
   assert(html.includes('<meta name="description" content="Découvrez 44 modèles') && !html.includes('Prototype interactif de l’expérience'), 'SEO description is missing or still describes a prototype.');
-  assert(html.includes(`<meta property="og:url" content="${baseUrl}/">`) && html.includes('<meta name="twitter:card" content="summary_large_image">'), 'Open Graph or Twitter metadata is incomplete.');
+  assert(html.includes(`<meta property="og:url" content="${publicOrigin}/">`) && html.includes('<meta name="twitter:card" content="summary_large_image">'), 'Open Graph or Twitter metadata is incomplete.');
+  assert(!html.includes('href="./styles.css"') && !html.includes("href='./styles.css'"), 'Rendered HTML still requests the obsolete external stylesheet.');
   const structuredDataMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   assert(structuredDataMatch, 'Schema.org structured data is missing.');
   const structuredData = JSON.parse(structuredDataMatch[1]);
@@ -184,30 +189,33 @@ try {
   const robotsResponse = await fetch(`${baseUrl}/robots.txt`);
   const robots = await robotsResponse.text();
   assert(robotsResponse.status === 200 && robotsResponse.headers.get('content-type')?.startsWith('text/plain'), 'robots.txt is missing or has the wrong content type.');
-  if (indexable) assert(robots.includes('User-agent: *') && robots.includes(`Sitemap: ${baseUrl}/sitemap.xml`), 'robots.txt does not advertise the configured sitemap.');
+  if (indexable) assert(robots.includes('User-agent: *') && robots.includes(`Sitemap: ${publicOrigin}/sitemap.xml`), 'robots.txt does not advertise the configured sitemap.');
   else assert(robots === 'User-agent: *\nDisallow: /\n', 'robots.txt does not block indexing in preview mode.');
 
   const sitemapResponse = await fetch(`${baseUrl}/sitemap.xml`);
   const sitemap = await sitemapResponse.text();
   assert(sitemapResponse.status === 200 && sitemapResponse.headers.get('content-type')?.startsWith('application/xml'), 'sitemap.xml is missing or has the wrong content type.');
-  assert(sitemap.includes(`<loc>${baseUrl}/</loc>`) && sitemap.includes('<lastmod>'), 'sitemap.xml does not contain the canonical homepage.');
+  assert(sitemap.includes(`<loc>${publicOrigin}/</loc>`) && sitemap.includes('<lastmod>'), 'sitemap.xml does not contain the canonical homepage.');
   assert((sitemap.match(/<url>/g) || []).length === officialSnapshot.models.length + 2, 'sitemap.xml does not contain the homepage, catalogue, and every model page.');
-  assert(sitemap.includes(`<loc>${baseUrl}/modeles/</loc>`) && sitemap.includes(`<loc>${baseUrl}/modeles/lisbonne/</loc>`), 'sitemap.xml is missing the catalogue or a model page.');
-  assert(sitemap.includes(`<loc>${baseUrl}/modeles/vienne/</loc>`) && sitemap.includes('<lastmod>2026-03-09</lastmod>'), 'The official Vienne lastmod was not preserved in the sitemap.');
+  assert(sitemap.includes(`<loc>${publicOrigin}/modeles/</loc>`), 'sitemap.xml is missing the model catalogue.');
+  for (const model of officialSnapshot.models) {
+    assert(sitemap.includes(`<loc>${publicOrigin}/modeles/${model.id}/</loc>`), `sitemap.xml is missing the ${model.id} model page.`);
+  }
+  assert(sitemap.includes(`<loc>${publicOrigin}/modeles/vienne/</loc>`) && sitemap.includes('<lastmod>2026-03-09</lastmod>'), 'The official Vienne lastmod was not preserved in the sitemap.');
 
   const catalogResponse = await fetch(`${baseUrl}/modeles/`, { headers: { 'user-agent': 'SiteGuru SEO crawler' } });
   const catalogHtml = await catalogResponse.text();
   assert(catalogResponse.status === 200 && catalogHtml.includes('<h1>Modèles de maisons usinées</h1>'), 'The SSR model catalogue is missing its H1.');
   assert(catalogHtml.includes(`<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">`), 'Catalogue robots metadata does not match TURNER_INDEXABLE.');
-  assert(catalogHtml.includes(`<link rel="canonical" href="${baseUrl}/modeles/">`) && catalogHtml.includes('"@type":"CollectionPage"') && catalogHtml.includes('"@type":"ItemList"'), 'The SSR catalogue metadata or structured data is incomplete.');
+  assert(catalogHtml.includes(`<link rel="canonical" href="${publicOrigin}/modeles/">`) && catalogHtml.includes('"@type":"CollectionPage"') && catalogHtml.includes('"@type":"ItemList"'), 'The SSR catalogue metadata or structured data is incomplete.');
   assert((catalogHtml.match(/<article class="model-card">/g) || []).length === officialSnapshot.models.length, 'The SSR catalogue does not render every model in HTML.');
-  assert(catalogHtml.includes(`href="${baseUrl}/modeles/lisbonne/"`) && !catalogHtml.includes('Cette expérience nécessite JavaScript'), 'The SSR catalogue lacks crawlable model links or still requires JavaScript.');
+  assert(catalogHtml.includes(`href="${publicOrigin}/modeles/lisbonne/"`) && !catalogHtml.includes('Cette expérience nécessite JavaScript'), 'The SSR catalogue lacks crawlable model links or still requires JavaScript.');
 
   const modelResponse = await fetch(`${baseUrl}/modeles/lisbonne/`, { headers: { 'user-agent': 'SiteGuru SEO crawler' } });
   const modelHtml = await modelResponse.text();
   assert(modelResponse.status === 200 && modelHtml.includes('<h1>Modèle de maison Lisbonne</h1>'), 'The Lisbonne SSR page is missing its H1.');
   assert(modelHtml.includes(`<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">`), 'Model robots metadata does not match TURNER_INDEXABLE.');
-  assert(modelHtml.includes(`<link rel="canonical" href="${baseUrl}/modeles/lisbonne/">`) && modelHtml.includes('<meta name="description"'), 'The Lisbonne canonical or description is missing.');
+  assert(modelHtml.includes(`<link rel="canonical" href="${publicOrigin}/modeles/lisbonne/">`) && modelHtml.includes('<meta name="description"'), 'The Lisbonne canonical or description is missing.');
   const modelStructuredDataMatch = modelHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   const modelStructuredData = modelStructuredDataMatch ? JSON.parse(modelStructuredDataMatch[1]) : null;
   assert(modelStructuredData?.['@graph']?.some(item => item['@type'] === 'Product' && item.name === 'Modèle de maison Lisbonne'), 'The Lisbonne Product structured data is missing.');
@@ -229,7 +237,7 @@ try {
 
   const config = await requestJson('/api/config');
   assert(config.response.status === 200 && config.body.content.models === officialSnapshot.models.length, 'Runtime config does not expose the official catalogue status.');
-  assert(config.body.content.publicOrigin === baseUrl, 'Runtime config does not expose the configured public origin.');
+  assert(config.body.content.publicOrigin === publicOrigin, 'Runtime config does not expose the configured public origin.');
   assert(config.body.content.indexable === indexable, 'Runtime config does not expose the configured indexing mode.');
   assert(config.body.capabilities.crmWebhook === true, 'Runtime config does not report the configured CRM webhook.');
   const officialContent = await requestJson('/api/official-content');
@@ -319,7 +327,7 @@ try {
   const adminListing = await requestJson('/api/project-intake', { headers: { authorization: `Bearer ${adminToken}` } });
   assert(adminListing.response.status === 200 && adminListing.body.records.length === 1, 'Authenticated intake listing did not return the stored record.');
 
-  console.log(`${fallbackOnly ? 'Fallback' : 'Primary'} HTML, official content, HTTP semantics, budget API, project intake, custom storage, and CRM webhook checks passed.`);
+  console.log(`${fallbackOnly ? 'Fallback' : 'Primary'} HTML, official content, HTTP semantics, budget API, project intake, custom storage, CRM webhook, and ${publicOrigin} origin checks passed.`);
 } finally {
   try {
     await stopServer();
