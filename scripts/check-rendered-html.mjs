@@ -124,6 +124,12 @@ try {
   assert(response.headers.get('permissions-policy')?.includes('camera=()'), 'Permissions policy is missing.');
 
   const html = await response.text();
+  const compressedResponse = await fetch(`${baseUrl}/`, { headers: { 'accept-encoding': 'br' } });
+  const compressedHtml = await compressedResponse.text();
+  assert(compressedResponse.headers.get('content-encoding') === 'br', 'The homepage did not negotiate Brotli compression.');
+  assert(compressedResponse.headers.get('vary')?.includes('Accept-Encoding'), 'The compressed homepage is missing Vary: Accept-Encoding.');
+  assert(Number(compressedResponse.headers.get('content-length')) < Buffer.byteLength(compressedHtml) * 0.5, 'The Brotli homepage representation is not materially smaller than the HTML.');
+  assert(compressedHtml === html, 'Compression changed the rendered homepage content.');
   const selectorHelperCount = (html.match(/const \$\$ =/g) || []).length;
   const rewrittenQuerySelectorAll = html.includes("const $ = (selector, root = document) => [...root.querySelectorAll(selector)]");
   assert(selectorHelperCount >= (fallbackOnly ? 1 : 2) && !rewrittenQuerySelectorAll, 'Rendered scripts were mutated during HTML insertion.');
@@ -135,6 +141,7 @@ try {
   assert(html.includes('<meta name="description" content="Découvrez 44 modèles') && !html.includes('Prototype interactif de l’expérience'), 'SEO description is missing or still describes a prototype.');
   assert(html.includes(`<meta property="og:url" content="${publicOrigin}/">`) && html.includes('<meta name="twitter:card" content="summary_large_image">'), 'Open Graph or Twitter metadata is incomplete.');
   assert(!html.includes('href="./styles.css"') && !html.includes("href='./styles.css'"), 'Rendered HTML still requests the obsolete external stylesheet.');
+  assert(html.includes(`<link rel="icon" href="${publicOrigin}/favicon.ico" sizes="any">`) && html.includes(`<link rel="apple-touch-icon" sizes="180x180" href="${publicOrigin}/apple-touch-icon.png">`), 'Homepage favicon metadata is incomplete.');
   const structuredDataMatch = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   assert(structuredDataMatch, 'Schema.org structured data is missing.');
   const structuredData = JSON.parse(structuredDataMatch[1]);
@@ -143,24 +150,31 @@ try {
   const faqSchema = structuredData['@graph']?.find(item => item['@type'] === 'FAQPage');
   assert(faqSchema?.mainEntity?.length === officialSnapshot.faqItems.length && faqSchema.mainEntity[0]?.acceptedAnswer?.text, 'Homepage FAQPage structured data is incomplete.');
   assert(html.includes("replace(/\\s+/g, ' ').trim()") && !html.includes("replace(/s+/g, ' ').trim()"), 'The rendered completion layer lost the whitespace-regex escape.');
-  assert(!html.includes('setTimeout(run,') && !html.includes('queueMicrotask(run)') && html.includes("DOMContentLoaded', initialize, { once: true }"), 'The completion layer still performs repeated full DOM initialization.');
+  assert(!html.includes('setTimeout(run,') && !html.includes('queueMicrotask(run)') && html.includes('requestIdleCallback(initialize, { timeout: 800 })'), 'The completion layer still performs repeated or render-blocking DOM initialization.');
   assert(!html.includes('Aucune donnée n’a été envoyée.'), 'The obsolete mock contact handler is still rendered.');
   assert(html.includes("fetch('/api/project-intake'"), 'The contact API bridge is missing.');
   assert(html.includes('name="website"') && html.includes('name="consent"'), 'Contact anti-spam or consent fields are missing.');
   assert(html.includes('.turner-fallback-actions button,.turner-fallback-actions a{min-height:44px}'), 'Mobile fallback action targets are smaller than the completion layer contract.');
   assert(html.includes('"id":"prague","name":"Prague","type":"Plain-pied"') && html.includes('"area":1034'), 'Official Prague data is missing from the rendered catalogue.');
   assert(html.includes('"imageUrl":"https://maisonsturner.ca/') && !html.includes('"remoteImage":') && !html.includes('"localImage":'), 'Rendered model data still uses duplicate image fields.');
+  assert(html.includes('-540x405.jpg.webp') && !html.includes('"imageUrl":"https://maisonsturner.ca/app/uploads/2024/02/athenes-1-1015x762.jpg"'), 'Homepage model cards do not use the official responsive WebP thumbnails.');
+  assert(!html.includes('"sourceDescription":') && !html.includes('"featureDetails":') && !html.includes('"planLevels":'), 'SEO-only model detail data leaked into the homepage client payload.');
   const lastOfficialModel = officialSnapshot.models.at(-1);
   assert(html.includes(`"id":"${lastOfficialModel.id}","name":"${lastOfficialModel.name}"`), 'The full official catalogue is not rendered.');
   assert(html.includes('<option value="Deux étages">Deux étages</option>') && html.includes('<option value="Champêtre">Champêtre</option>') && html.includes('<option value="4">4 chambres</option>'), 'Official catalogue filters are incomplete.');
   assert(html.includes('data-step="4"') && html.includes('Production</button>'), 'The official five-step process is incomplete.');
   assert(html.includes('turner-content-verified-at') && html.includes('politique-de-confidentialite'), 'Official provenance or privacy links are missing.');
+  assert(html.includes('srcset="https://maisonsturner.ca/app/uploads/2024/02/athenes-1-540x405.jpg.webp 540w') && html.includes('imagesizes="(max-width: 900px) 100vw, 57vw"'), 'The homepage hero is missing responsive WebP delivery metadata.');
+  assert(html.includes('id="catalog-pagination" hidden') && html.includes('href="/modeles/">Voir les 44 fiches'), 'The homepage is missing its complete catalogue link.');
   if (fallbackOnly) {
     assert(!html.includes('window.TurnerPrototype = {'), 'Fallback-only rendering still includes the primary client.');
     assert(html.includes('ensureFallbackShell') && html.includes('updateFallbackBudget'), 'Fallback-only controls are incomplete.');
+    assert(!html.includes('visibleModelCount: 9'), 'Fallback-only rendering unexpectedly includes the primary progressive catalogue.');
   } else {
     assert(html.includes('window.TurnerPrototype = {'), 'Primary client rendering is missing.');
     assert(html.includes('href="/modeles/${escapeHTML(model.id)}/"') && !html.includes('data-model-id="${model.id}"'), 'Primary catalogue cards do not link to crawlable model pages.');
+    assert(html.includes('visibleModelCount: 9') && html.includes('filtered.slice(0, state.visibleModelCount)'), 'The homepage catalogue is not progressively rendered.');
+    assert(html.includes('requestIdleCallback(init, { timeout: 500 })'), 'The primary client still initializes before the first rendering opportunity.');
   }
 
   const inlineScripts = [...html.matchAll(/<script(\s[^>]*)?>([\s\S]*?)<\/script>/g)]
@@ -180,6 +194,15 @@ try {
   assert(headResponse.status === 200, `HEAD / returned ${headResponse.status}`);
   assert((await headResponse.text()) === '', 'HEAD / returned a response body.');
   assert(Number(headResponse.headers.get('content-length')) > 0, 'HEAD / is missing the representation length.');
+
+  const faviconResponse = await fetch(`${baseUrl}/favicon.ico`);
+  const faviconBytes = await faviconResponse.arrayBuffer();
+  assert(faviconResponse.status === 200 && faviconResponse.headers.get('content-type') === 'image/x-icon' && faviconBytes.byteLength > 100, 'favicon.ico is missing or invalid.');
+  assert(faviconResponse.headers.get('cache-control')?.includes('max-age=2592000'), 'Static image assets do not have an efficient cache lifetime.');
+  const faviconPngResponse = await fetch(`${baseUrl}/favicon-32x32.png`);
+  assert(faviconPngResponse.status === 200 && faviconPngResponse.headers.get('content-type') === 'image/png', 'The PNG favicon is missing or invalid.');
+  const appleTouchIconResponse = await fetch(`${baseUrl}/apple-touch-icon.png`);
+  assert(appleTouchIconResponse.status === 200 && appleTouchIconResponse.headers.get('content-type') === 'image/png', 'The Apple touch icon is missing or invalid.');
 
   const crawlerResponse = await fetch(`${baseUrl}/`, { headers: { 'user-agent': 'SiteGuru SEO crawler' } });
   const crawlerHtml = await crawlerResponse.text();
@@ -203,19 +226,26 @@ try {
   }
   assert(sitemap.includes(`<loc>${publicOrigin}/modeles/vienne/</loc>`) && sitemap.includes('<lastmod>2026-03-09</lastmod>'), 'The official Vienne lastmod was not preserved in the sitemap.');
 
+  const catalogRedirect = await fetch(`${baseUrl}/modeles`, { redirect: 'manual' });
+  assert(catalogRedirect.status === 308 && catalogRedirect.headers.get('location') === `${publicOrigin}/modeles/`, 'The model catalogue does not redirect to its trailing-slash canonical URL.');
   const catalogResponse = await fetch(`${baseUrl}/modeles/`, { headers: { 'user-agent': 'SiteGuru SEO crawler' } });
   const catalogHtml = await catalogResponse.text();
   assert(catalogResponse.status === 200 && catalogHtml.includes('<h1>Modèles de maisons usinées</h1>'), 'The SSR model catalogue is missing its H1.');
   assert(catalogHtml.includes(`<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">`), 'Catalogue robots metadata does not match TURNER_INDEXABLE.');
   assert(catalogHtml.includes(`<link rel="canonical" href="${publicOrigin}/modeles/">`) && catalogHtml.includes('"@type":"CollectionPage"') && catalogHtml.includes('"@type":"ItemList"'), 'The SSR catalogue metadata or structured data is incomplete.');
+  assert(catalogHtml.includes(`<link rel="icon" href="${publicOrigin}/favicon.ico" sizes="any">`), 'The SSR catalogue is missing favicon metadata.');
   assert((catalogHtml.match(/<article class="model-card">/g) || []).length === officialSnapshot.models.length, 'The SSR catalogue does not render every model in HTML.');
   assert(catalogHtml.includes(`href="${publicOrigin}/modeles/lisbonne/"`) && !catalogHtml.includes('Cette expérience nécessite JavaScript'), 'The SSR catalogue lacks crawlable model links or still requires JavaScript.');
 
+  const modelRedirect = await fetch(`${baseUrl}/modeles/lisbonne`, { redirect: 'manual' });
+  assert(modelRedirect.status === 308 && modelRedirect.headers.get('location') === `${publicOrigin}/modeles/lisbonne/`, 'The model page does not redirect to its trailing-slash canonical URL.');
   const modelResponse = await fetch(`${baseUrl}/modeles/lisbonne/`, { headers: { 'user-agent': 'SiteGuru SEO crawler' } });
   const modelHtml = await modelResponse.text();
   assert(modelResponse.status === 200 && modelHtml.includes('<h1>Modèle de maison Lisbonne</h1>'), 'The Lisbonne SSR page is missing its H1.');
   assert(modelHtml.includes(`<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">`), 'Model robots metadata does not match TURNER_INDEXABLE.');
   assert(modelHtml.includes(`<link rel="canonical" href="${publicOrigin}/modeles/lisbonne/">`) && modelHtml.includes('<meta name="description"'), 'The Lisbonne canonical or description is missing.');
+  assert(modelHtml.includes(`<link rel="icon" href="${publicOrigin}/favicon.ico" sizes="any">`) && modelHtml.includes('Portrait du modèle Lisbonne'), 'The Lisbonne favicon or distinct profile copy is missing.');
+  assert(modelHtml.includes('Pièces et dimensions du modèle Lisbonne') && modelHtml.includes('12’-5’’ x 13’-10’’'), 'The Lisbonne official plan details are missing.');
   const modelStructuredDataMatch = modelHtml.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   const modelStructuredData = modelStructuredDataMatch ? JSON.parse(modelStructuredDataMatch[1]) : null;
   assert(modelStructuredData?.['@graph']?.some(item => item['@type'] === 'Product' && item.name === 'Modèle de maison Lisbonne'), 'The Lisbonne Product structured data is missing.');
@@ -242,6 +272,7 @@ try {
   assert(config.body.capabilities.crmWebhook === true, 'Runtime config does not report the configured CRM webhook.');
   const officialContent = await requestJson('/api/official-content');
   assert(officialContent.response.status === 200 && officialContent.body.models.length === officialSnapshot.models.length, 'Official content API is incomplete.');
+  assert(officialContent.body.schemaVersion === 2 && officialContent.body.models.every(model => model.sourceDescription && model.featureDetails.length === 3 && model.planLevels.length > 0), 'Official content API is missing enriched model details.');
   assert(officialContent.body.models.some(model => model.id === 'turenne' && model.garage === true), 'Official content API changed a featured model specification.');
   assert(officialContent.body.inclusionGroups[0].items.length >= 20, 'Official module components are incomplete.');
 

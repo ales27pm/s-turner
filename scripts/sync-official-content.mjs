@@ -13,7 +13,7 @@ const modelTypes = ['Chalet', 'Plain-pied', 'Deux étages'];
 const modelStyles = ['Contemporain', 'Classique', 'Champêtre'];
 
 function cleanText(value) {
-  return String(value || '').replace(/\s+/g, ' ').trim();
+  return String(value || '').replace(/\s+/g, ' ').replace(/\s+([.,;:!?])/g, '$1').trim();
 }
 
 async function fetchText(url, attempts = 3) {
@@ -72,7 +72,23 @@ function parseModel(entry, html) {
 
   const id = new URL(entry.url).pathname.split('/').filter(Boolean).at(-1);
   const image = $('.c-bannerSingle__image img[src^="https://"]').first().attr('src');
-  const features = $('.c-modelAssets__elem__title').map((_, node) => cleanText($(node).text())).get().filter(Boolean).slice(0, 3);
+  const sourceDescription = cleanText($('.c-bannerSingle__content__info__desc').first().text());
+  const featureDetails = $('.c-modelAssets__elem').map((_, node) => {
+    const item = $(node);
+    return {
+      title: cleanText(item.find('.c-modelAssets__elem__title').text()),
+      copy: cleanText(item.find('.c-modelAssets__elem__text').text()),
+    };
+  }).get().filter(feature => feature.title && feature.copy).slice(0, 3);
+  const planLevels = $('.c-modelDemo__config__info').map((_, node) => {
+    const item = $(node);
+    const values = item.find('.c-modelDemo__config__info__list li').map((__, valueNode) => cleanText($(valueNode).text())).get().filter(Boolean);
+    const rooms = [];
+    for (let index = 0; index + 1 < values.length; index += 2) {
+      rooms.push({ name: values[index], dimensions: values[index + 1] });
+    }
+    return { name: cleanText(item.find('.c-modelDemo__config__info__category').text()), rooms };
+  }).get().filter(level => level.name && level.rooms.length > 0);
   const virtualTourUrl = $('.c-bannerSingle a[href*="versom-vr.com"]').first().attr('href') || null;
   const model = {
     id,
@@ -86,14 +102,17 @@ function parseModel(entry, html) {
     garage: /^oui$/i.test(specs.garage || ''),
     area: parseNumber(specs.superficie, 'area', entry.url),
     imageUrl: image,
-    features,
+    sourceDescription,
+    features: featureDetails.map(feature => feature.title),
+    featureDetails,
+    planLevels,
     sourceUrl: entry.url,
     sourceLastModified: entry.lastModified,
     virtualTourUrl,
   };
   model.description = factualDescription(model);
 
-  if (!model.id || !model.name || !model.type || !model.styles.length || !model.imageUrl || model.features.length === 0) {
+  if (!model.id || !model.name || !model.type || !model.styles.length || !model.imageUrl || !model.sourceDescription || model.featureDetails.length !== 3 || model.planLevels.length === 0) {
     throw new Error(`Incomplete model data on ${entry.url}`);
   }
   return model;
@@ -141,7 +160,7 @@ async function buildSnapshot() {
 
   const components = load(componentsHtml);
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     verifiedAt: new Date().toISOString(),
     sources: {
       modelSitemap: modelSitemapUrl,

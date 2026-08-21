@@ -77,6 +77,14 @@ compatibility scaffold; opening it directly requires a browser that implements
 `DecompressionStream`. Do not deploy the standalone `index.html` as the
 production entry point.
 
+The server negotiates Brotli or Gzip for HTML, JSON, JavaScript, CSS, XML, and
+other text responses. The homepage hero uses official responsive WebP sources,
+and the interactive homepage catalogue renders nine cards initially with an
+incremental “Afficher plus” control. The complete server-rendered catalogue and
+all model links remain available at `/modeles/`; this keeps the initial DOM
+small without reducing crawlable inventory. Static image assets use a 30-day
+browser cache.
+
 `cheerio` is intentionally a development dependency because it is used only by
 `content:sync`. A runtime host can install with `npm ci --omit=dev`; run content
 synchronization in a build or maintenance environment and deploy the validated,
@@ -89,7 +97,9 @@ JavaScript. The rendered `<head>` contains a descriptive title and description,
 one canonical URL, Open Graph/Twitter cards, and Schema.org graphs for the
 business, website, and FAQ. `/modeles/` is a server-rendered catalogue with an
 `ItemList`; each `/modeles/:id/` page has unique metadata, breadcrumbs, and a
-`Product` graph generated from the synchronized model record.
+`Product` graph generated from the synchronized model record. Favicon assets
+are served locally, and catalogue or model URLs without their canonical
+trailing slash redirect permanently with HTTP `308`.
 
 `/robots.txt` and `/sitemap.xml` are generated from `TURNER_PUBLIC_ORIGIN`. Set
 that variable to the exact externally reachable origin, without a path. Preview
@@ -111,11 +121,12 @@ npm run content:check
 ```
 
 `content:sync` parses the official HTML with a structured parser, validates every
-model, and writes `data/official-content.json` atomically only after a complete
-crawl. It also records the official process, FAQ, module components, contact
-details, privacy page, and links to the APCHQ, GCR and RBQ verification surfaces.
-Descriptions in the snapshot are factual summaries generated from published
-specifications rather than copied marketing paragraphs.
+model, and writes the versioned `data/official-content.json` atomically only
+after a complete crawl. Each model retains a compact factual summary for cards,
+the official descriptive copy, three explained features, and the published
+room dimensions grouped by level. The snapshot also records the official
+process, FAQ, module components, contact details, privacy page, and links to the
+APCHQ, GCR and RBQ verification surfaces.
 
 To inspect the runtime completion layer without the primary client bundle:
 

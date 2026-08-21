@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "verifiedAt": "2026-08-20T14:53:29.221Z",
+  "schemaVersion": 2,
+  "verifiedAt": "2026-08-20T22:50:56.161Z",
   "sources": {
     "modelSitemap": "https://maisonsturner.ca/model-sitemap.xml",
     "company": "https://maisonsturner.ca/a-propos",
@@ -236,10 +236,48 @@
       "garage": false,
       "area": 576,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/athenes-1-1015x762.jpg",
+      "sourceDescription": "L’Athènes se démarque des autres chalets par sa petite superficie et sa grande fenestration. Athènes à une chambre à coucher et une salle de bain au rez-de-chaussée. Ce chalet procure une grande proximité avec la nature grâce à ces deux portes-patios en façade. Le séjour et la cuisine ont un plafond cathédral.",
       "features": [
         "Grande fenestration",
         "Économique",
         "Toit cathédrale"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable"
+        },
+        {
+          "title": "Toit cathédrale",
+          "copy": "Surface de plafond surélevée"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-6’’ x 13’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "11’-8’’ x 9’-7’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-3’’ x 9’-0’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-6’’ x 7’-4’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/athenes",
       "sourceLastModified": "2026-03-09T19:21:43+00:00",
@@ -260,10 +298,56 @@
       "garage": false,
       "area": 1034,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg",
+      "sourceDescription": "La Prague est une maison de ville contemporaine qui se démarque par sa façade. L’aire ouverte est spacieuse et lumineuse grâce à la grande porte-patio de 8’ dans la cuisine. L’îlot de grande dimension confère à la cuisine, une touche conviviale et ergonomique. Vous y trouverez aussi 2 chambres avec de grandes garde-robes ainsi qu’une salle de bain avec douche et bain autoportant séparés.",
       "features": [
         "Optimisation",
         "Économique",
         "Garde-manger"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable."
+        },
+        {
+          "title": "Garde-manger",
+          "copy": "Grande surface de rangement fermé dans la cuisine."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "12’-1’’ x 10’-6’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "11’-9’’ x 11’-6’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "12’-0’ x 11’-2’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-1’’ x 10’-0’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-5’ x 8’-5’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "12’-1’’ x 8’-5’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/prague",
       "sourceLastModified": "2026-03-09T19:28:58+00:00",
@@ -284,10 +368,56 @@
       "garage": false,
       "area": 1067,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg",
+      "sourceDescription": "La Oslo vous offrira des moments de zénitude grâce à son aire ouverte et à sa fenestration abondante. Sa toiture monopente lui confère un look contemporain. L’option rez-de-jardin est aussi disponible pour ce modèle ainsi qu’une version avec porte en façade.",
       "features": [
         "Grande fenestration",
         "Aire ouverte spacieuse",
         "Toit cathédrale"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Toit cathédrale",
+          "copy": "Surface de plafond surélevée"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "14’-2’’ x 9’-3’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-4’’ x 11’-7’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-7’ x 10’-9’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-5’’ x 10’-0’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "10’-7’’ x 8’-11’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "13’-9’’ x 11’-3’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/oslo",
       "sourceLastModified": "2024-02-15T21:11:38+00:00",
@@ -308,10 +438,56 @@
       "garage": false,
       "area": 1222,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg",
+      "sourceDescription": "La Portofino est la maison coup-de-cœur de nos clients. Dès votre entrée, vous serez conquis par l’espace aire ouverte et le magnifique escalier central. Elle possède une cuisine spacieuse avec beaucoup de rangement et un vaste ilot. La salle de bain et le walk-in de la chambre principale impressionnent dès la première visite.",
       "features": [
         "Grande fenestration",
         "Aire ouverte spacieuse",
         "Rangement"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Rangement",
+          "copy": "Le plan maximise les espaces de rangement dans la maison."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "14’-7’’ x 11’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "16’-9’’ x 12’-0’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-3’ x 11’-4’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-7’’ x 11’-4’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-9’’ x 11’-9’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "16’-9’’ x 7’-7’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/portofino",
       "sourceLastModified": "2024-02-15T21:07:31+00:00",
@@ -332,10 +508,56 @@
       "garage": true,
       "area": 1400,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/turenne-1-1015x762.jpg",
+      "sourceDescription": "L’aire de vie se trouvant à l’arrière de la maison vous confère un accès rapide à votre cour extérieure. La Turenne offre une vaste entrée, un grande chambre principale et ainsi qu’un espace bureau derrière le garage. Également disponible en plusieurs options et personnalisable selon vos besoins.",
       "features": [
         "Garage",
         "Aire ouverte spacieuse",
         "Intimité"
+      ],
+      "featureDetails": [
+        {
+          "title": "Garage",
+          "copy": "Garage chauffé avec accès direct à la maison."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Intimité",
+          "copy": "L'aire ouverte sur l'arrière procure un sentiment de déconnection avec la vie urbaine."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-5’’ x 11’-4’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "13’-10’’ x 14’-3’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "12’-6’ x 12’-6’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-6’’ x 9’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-6’’ x 11’-10’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "10’-1’’ x 14’-3’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/turenne",
       "sourceLastModified": "2024-02-15T20:44:36+00:00",
@@ -356,10 +578,56 @@
       "garage": false,
       "area": 1075,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/liverpool-1-1015x762.jpg",
+      "sourceDescription": "La Liverpool est une jolie construction de type Farmhouse. L’aire de vie, à l’arrière de la maison, est parfaitement pensée pour la vie de famille et possède une grande fenestration digne d’un chalet. Ce plan offre une salle de bain optimisée incluant bain et douche séparés. Chaleureuse et rassembleuse, la Liverpool se jumellera très bien à votre quotidien.",
       "features": [
         "Optimisation",
         "Économique",
         "Intimité"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable."
+        },
+        {
+          "title": "Intimité",
+          "copy": "L'aire ouverte sur l'arrière procure un sentiment de déconnection avec la vie urbaine."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "11’-10’’ x 11’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "13’-1’’ x 12’-10’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "10’-10’ x 12’-0’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-4’’ x 10’-11’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-0’’ x 11’-7’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-7’’ x 14’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/liverpool",
       "sourceLastModified": "2026-03-09T19:25:45+00:00",
@@ -380,10 +648,69 @@
       "garage": false,
       "area": 576,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/athenes-rdj-1-1015x762.jpg",
+      "sourceDescription": "L’ Athènes se démarque des autres chalets par sa petite superficie et sa grande fenestration. Athènes a une chambre à coucher et une salle de bain au rez-de-chaussée. Ce chalet procure une grande proximité avec la nature grâce à ces deux porte patios en façade. Le séjour et la cuisine ont un plafond cathédral.",
       "features": [
         "Grande fenestration",
         "Rez-de-jardin",
         "Toit cathédrale"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Rez-de-jardin",
+          "copy": "Étage supplémentaire accessible par le jardin"
+        },
+        {
+          "title": "Toit cathédrale",
+          "copy": "Surface de plafond surélevée"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-6’’ x 13’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "11’-8’’ x 9’-7’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-3’’ x 9’-0’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-6’’ x 7’-4’’"
+            }
+          ]
+        },
+        {
+          "name": "Rez-de-jardin",
+          "rooms": [
+            {
+              "name": "Séjour",
+              "dimensions": "21’-10’’ x 9’-7’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-8’’ x 8’-10’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-0’’ x 5’-5’’"
+            },
+            {
+              "name": "Salle mécanique",
+              "dimensions": "7’-0’’ x 5’-0’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/athenes-rez-de-jardin",
       "sourceLastModified": "2026-03-09T19:23:47+00:00",
@@ -404,10 +731,56 @@
       "garage": false,
       "area": 936,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/avignon-1-1015x762.jpg",
+      "sourceDescription": "L’Avignon est le parfait mélange entre simplicité et confort. Cette demeure d’inspiration classique saura vous surprendre, tant par son aire ouverte que par son prix avantageux. Ce modèle est disponible en plusieurs versions pour vous permettre de la personnaliser.",
       "features": [
         "Optimisation",
         "Économique",
         "Aire ouverte spacieuse"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable"
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "7’-4’’ x 9’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-0’’ x 15’-9’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-9’’ x 9’-0’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-11’’ x 12’-5’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "8’-5’’ x 9’-3’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-3’’ x 8’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/avignon",
       "sourceLastModified": "2024-04-22T19:21:24+00:00",
@@ -428,10 +801,52 @@
       "garage": false,
       "area": 1080,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/bari-1-1015x762.jpg",
+      "sourceDescription": "Faites le plein d’énergie dans le chalet Bari, un lieu lumineux qui sera propice tant à la détente qu’aux rassemblements. Un chalet conçu avec l’idée de rassembler familles et amis.",
       "features": [
         "Toit cathédrale",
         "Grande fenestration",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Toit cathédrale",
+          "copy": "Surface de plafond surélevée"
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit un espace laveuse-sécheuse."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "10’-8’’ x 15’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "17’-11’’ x 15’-11’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-11’’ x 10’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-6’’ x 9’-11’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "10’-6’’ x 7’-8’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/bari",
       "sourceLastModified": "2024-04-22T19:21:36+00:00",
@@ -452,10 +867,69 @@
       "garage": false,
       "area": 1580,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2023/12/01_bastia-530-s-facade-1015x762.jpg",
+      "sourceDescription": "À la fois sobre et accueillante, la Bastia mise sur un design contemporain. Dès l’entrée, vous pourrez constater l’aire ouverte ainsi qu’une pratique salle d’eau. Elle offre 3 chambres ainsi qu’une salle de bain complète à l’étage",
       "features": [
         "Buanderie",
         "3 chambres",
         "Aire ouverte spacieuse"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "12’-11’’ x 10’-6’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "16’-10’’ x 16’-1’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "5’-0’’ x 8’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "12’-2’’ x 9’-3’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-4’’ x 13’-1’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-7’’ x 9’-9’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-6’’ x 9’-3’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "12’-3’’ x 9’-3’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/bastia",
       "sourceLastModified": "2024-04-22T19:21:49+00:00",
@@ -476,10 +950,60 @@
       "garage": false,
       "area": 1250,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/beaujolais-1-1015x762.jpg",
+      "sourceDescription": "Avec ses 3 chambres, la Beaujolais est parfaite pour accueillir votre famille. Spacieuse et imposante, cette maison saura vous charmer à coup sur.",
       "features": [
         "Entrée séparée",
         "3 chambres",
         "Aire ouverte spacieuse"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-6’’ x 11’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-6’’ x 12’-3’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "12’-0’’ x 10’-9’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-4’’ x 12’-1’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-0’’ x 11’-0’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "9’-0’’ x 9’-8’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-5’’ x 11’-0’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/beaujolais",
       "sourceLastModified": "2024-04-22T19:21:29+00:00",
@@ -500,10 +1024,56 @@
       "garage": false,
       "area": 1080,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/bella-1-1015x762.jpg",
+      "sourceDescription": "La Bella séduit par sa grande luminosité et son design harmonieux. C’est une demeure conviviale grâce à l’aire ouverte donnant sur le séjour et salle-à-diner.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "10’-11’’ x 8’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "18’-6’’ x 15’-7’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-11’’ x 12’-7’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-7’’ x 12’-3’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-3’’ x 9’-0’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-7’’ x 8’-7’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/bella",
       "sourceLastModified": "2024-03-12T20:41:43+00:00",
@@ -524,10 +1094,56 @@
       "garage": false,
       "area": 1075,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/bucarest-1-1015x762.jpg",
+      "sourceDescription": "La Bucarest est un plan au style très polyvalent. Conçu avec un extérieur contemporain, elle s’intègre parfaitement dans un environnement urbain ou rural. Son aire ouverte en « L » et son grand îlot dans la cuisine offrent un espace spacieux pour accueillir les invités. On y retrouve 2 chambres à coucher et une salle de bain avec une fenestration moderne, un bain autoportant et une douche séparée. Les fenêtres de grandes dimensions illuminent toutes les pièces et donnent une impression de grandeur accrue.",
       "features": [
         "Grande fenestration",
         "Économique",
         "Aire ouverte spacieuse"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable"
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-0’’ x 12’-10’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "11’-5’’ x 13’-8’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "10’-10’’ x 11’-8’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-9’’ x 10’-4’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "6’-6’’ x 11’-8’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "13’-6’’ x 12’-10’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/bucarest",
       "sourceLastModified": "2026-03-09T19:26:38+00:00",
@@ -548,10 +1164,56 @@
       "garage": false,
       "area": 1058,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/catania-1-1015x762.jpg",
+      "sourceDescription": "La Catania est un magnifique modèle économique. Les espaces ouverts laissant entrer la lumière naturelle rendent la maison chaleureuse.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit un espace laveuse-sécheuse."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-8’’ x 10’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "16’-3’’ x 14’-9’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-0’’ x 13’-4’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-5’’ x 11’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-11’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-8’’ x 10’-11’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/catania",
       "sourceLastModified": "2026-06-11T20:31:22+00:00",
@@ -572,10 +1234,56 @@
       "garage": false,
       "area": 1375,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/chambery-1-1015x762.jpg",
+      "sourceDescription": "Le raffinement est au coeur de la ravissante Chambéry. Elle possède une fenestration abondante et des pièces spacieuses. Ce plan offre une cuisine classique et un grand perron couvert en façade.",
       "features": [
         "Entrée séparée",
         "Grande fenestration",
         "Intimité"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        },
+        {
+          "title": "Intimité",
+          "copy": "L'aire ouverte sur l'arrière procure un sentiment de déconnection avec la vie urbaine."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "14’-0’’ x 12’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-0’’ x 17’-2’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-4’’ x 12’-0’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-2’’ x 12’-8’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-7’’ x 12’-0’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "13’-0’’ x 9’-3’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/chambery",
       "sourceLastModified": "2024-03-12T20:43:49+00:00",
@@ -596,10 +1304,81 @@
       "garage": false,
       "area": 2478,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/chateauneuf-1-1015x762.jpg",
+      "sourceDescription": "La Châteauneuf porte bien son nom: majestueuse. Si vous recherchez une demeure spacieuse et luxueuse, c’est assurément celle qu’il vous faut!",
       "features": [
         "Entrée séparée",
         "3 chambres",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "11’-6’’ x 13’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "12’-0’’ x 14’-0’’"
+            },
+            {
+              "name": "Dinette",
+              "dimensions": "10’-11’’ x 14’-0’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-6’’ x 13’-0’’"
+            },
+            {
+              "name": "Studio",
+              "dimensions": "11’-0’’ x 13’-0’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "18’-0’’ x 13’-0’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-0’’ x 13’-0’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "12’-0’’ x 11’-7’’"
+            },
+            {
+              "name": "Salle de bain 1",
+              "dimensions": "11’-6’’ x 7’-7’’"
+            },
+            {
+              "name": "Salle de bain 2",
+              "dimensions": "8’-11’’ x 10’-8’’"
+            },
+            {
+              "name": "Boudoir",
+              "dimensions": "8’-1’’ x 14’-0’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/chateauneuf",
       "sourceLastModified": "2024-04-25T15:16:04+00:00",
@@ -620,10 +1399,56 @@
       "garage": false,
       "area": 1187,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/clary-1-1015x762.jpg",
+      "sourceDescription": "Ce plein-pied vous offre des espaces aérés et lumineux, sans compromis sur la fonctionnalité. La clary possède de grandes pièces et un walk-in pour la chambre principale.",
       "features": [
         "Grande fenestration",
         "Aire ouverte spacieuse",
         "Rangement"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Rangement",
+          "copy": "Le plan maximise les espaces de rangement dans la maison."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-8’’ x 12’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-9’’ x 13’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "10’-1’’ x 10’-9’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "12’-0’’ x 12’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-7’’ x 9’-4’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "10’-2’’ x 12’-11’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/clary",
       "sourceLastModified": "2024-03-12T21:02:10+00:00",
@@ -644,10 +1469,56 @@
       "garage": false,
       "area": 1102,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/copenhague-1-1015x762.jpg",
+      "sourceDescription": "Voici la Copenhague, un modèle unifamilial au design urbain. Ce modèle est équipé d’une salle d’eau complète ainsi que d’une salle de lavage au rez-de-chaussée. La cuisine se démarque par son garde-manger walk-in et sa terrasse couverte offrant un espace de vie extérieur apprécié de tous.",
       "features": [
         "Buanderie",
         "Aire ouverte spacieuse",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "13’-5’’ x 10’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-7’’ x 11’-0’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "14’-7’’ x 11’-0’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-6’’ x 12’-4’’"
+            },
+            {
+              "name": "Salle de lavage",
+              "dimensions": "6’-6’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-8’’ x 10’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/copenhague",
       "sourceLastModified": "2024-02-21T20:57:54+00:00",
@@ -668,10 +1539,56 @@
       "garage": false,
       "area": 1122,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/danemark-1-1015x762.jpg",
+      "sourceDescription": "La Danemark est un chalet qui s’adapte très bien à la vie urbaine. Elle est grandement éclairée grâce au toit cathédrale et à la fenestration abondante. Ce modèle se démarque par son entrée indépendante et son aire ouverte. De plus, munie d’une salle de bain avec douche et bain séparés, elle permet de se ressourcer sans sortir de chez soi.",
       "features": [
         "Grande fenestration",
         "Entrée séparée",
         "Toit cathédrale"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "Toit cathédrale",
+          "copy": "Surface de plafond surélevée"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "11’-10’’ x 11’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "13’-1’’ x 12’-10’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "10’-10’ x 12’-0’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-4’’ x 10’-11’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-0’’ x 11’-7’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-7’’ x 14’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/danemark",
       "sourceLastModified": "2026-03-09T19:27:21+00:00",
@@ -693,10 +1610,56 @@
       "garage": false,
       "area": 1161,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/dijon-1-1015x762.jpg",
+      "sourceDescription": "Offrez-vous une vue panoramique sur le paysage qui vous entoure. La Dijon vous marquera avec son patio longeant la maison sur le côté droit. Cette maison offre une aire ouverte ainsi qu’un walk-in garde-manger.",
       "features": [
         "Buanderie",
         "Aire ouverte spacieuse",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-1’’ x 9’-6’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "12’-0’’ x 8’-0’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-11’’ x 9’-6’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-5’’ x 11’-7’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-10’’ x 12’-1’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-4’’ x 9’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/dijon",
       "sourceLastModified": "2024-03-12T20:31:04+00:00",
@@ -717,10 +1680,73 @@
       "garage": true,
       "area": 1921,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/fontainebleau-1-1015x762.jpg",
+      "sourceDescription": "La Fontainebleau est une maison classique offrant une grande cuisine, un accès direct au garage ainsi qu’une entrée fermée. Elle possède trois chambres à l’étage et une salle de bain avec toilette séparée. Vous y trouverez aussi une buanderie fonctionnelle attenante à la salle d’eau au rez-de-chaussée.",
       "features": [
         "Buanderie",
         "3 chambres",
         "Garage"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Garage",
+          "copy": "Garage chauffé avec accès direct à la maison"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "15’-4’’ x 13’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "17’-6’’ x 14’-7’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "6’-2’’ x 5’-7’’"
+            },
+            {
+              "name": "Salle de lavage",
+              "dimensions": "6’-4’’ x 7’-4’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-10’’ x 13’-9’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-10’’ x 13’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-0’’ x 11’-3’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-8’’ x 10’-7’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "13’-5’’ x 10’-4’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/fontainebleau",
       "sourceLastModified": "2024-03-12T20:37:00+00:00",
@@ -741,10 +1767,56 @@
       "garage": false,
       "area": 1102,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/francfort-1-1015x762.jpg",
+      "sourceDescription": "Les 1102 pieds carrés ont été maximisés afin de vous offrir une entrée fermée et une salle de bain moderne complète. Chaque chambre est munie d’une garde-robe de type walk-in. De plus, l’espace ouvert vous donne accès à une terrasse extérieure, axée sur le plaisir et la détente! Ce modèle est également ajustable selon vos besoins.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Entrée séparée"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "13’-8’’ x 10’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-7’’ x 11’-0’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-3’’ x 12’-4’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-11’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-1’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "14’-7’’ x 7’-7’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/francfort",
       "sourceLastModified": "2024-02-16T19:45:19+00:00",
@@ -765,10 +1837,56 @@
       "garage": false,
       "area": 1186,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/geneve-1-1015x762.jpg",
+      "sourceDescription": "La conception de la Genève est optimale avec sa cuisine parfaitement ergonomique, ainsi que sa salle-de-bain équipée de deux lavabos. Ce plan est aussi offert en plusieurs options tel: Laveuse-sécheuse au rez-de-chaussée, modèle 3 chambres, option avec garage etc.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Rangement"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Rangement",
+          "copy": "Le plan maximise les espaces de rangement dans la maison."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-5’’ x 9’-8’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "17’-0’’ x 13’-0’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-8’’ x 12’-7’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-9’’ x 12’-2’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-6’’ x 11’-8’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "11’-1’’ x 9’-4’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/geneve",
       "sourceLastModified": "2024-03-12T19:48:52+00:00",
@@ -789,10 +1907,56 @@
       "garage": false,
       "area": 1144,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/grenoble-1-1015x762.jpg",
+      "sourceDescription": "Tant à l’intérieur qu’à l’extérieur, la Grenoble se démarque par son élégance. Elle est facilement adaptable pour un style de maison »Farmhouse ». Son séjour à grande fenestration vous offre un bel éclairage naturel.",
       "features": [
         "Buanderie",
         "Aire ouverte spacieuse",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-11’’ x 11’-6’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "12’-10’’ x 14’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-11’’ x 11’-6’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-6’’ x 11’-3’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-6’’ x 9’-5’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "10’-0’’ x 8’-11’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/grenoble",
       "sourceLastModified": "2024-04-23T12:41:23+00:00",
@@ -813,10 +1977,69 @@
       "garage": false,
       "area": 1396,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-1-1015x762.jpg",
+      "sourceDescription": "Lumière, grandeur, chaleur. La Lausanne Rive-Sud répond à tous les critères du cottage familial!",
       "features": [
         "Entrée séparée",
         "3 chambres",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-1’’ x 8’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-6’’ x 11’-11’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "5’-11’’ x 8’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "10’-11’’ x 11’-11’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-11’’ x 11’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-5’’ x 9’-3’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "9’-0’’ x 12’-5’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-11’’ x 8’-4’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/lausanne",
       "sourceLastModified": "2024-04-25T15:16:44+00:00",
@@ -837,10 +2060,69 @@
       "garage": false,
       "area": 1482,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/lausanne-rive-sud-1.jpg",
+      "sourceDescription": "Lumière, grandeur, chaleur. La Lausanne Rive-Sud répond à tous les critères du cottage familial! Perron couvert sur deux façades donnant accès à la salle-à-diner.",
       "features": [
         "Entrée séparée",
         "3 chambres",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "10’-7’’ x 8’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-6’’ x 12’-0’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "6’-2’’ x 8’-5’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-8’’ x 12’-0’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "14’-11’’ x 11’-10’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-5’’ x 9’-3’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "9’-0’’ x 12’-5’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-9’’ x 8’-5’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/lausanne-rive-sud",
       "sourceLastModified": "2024-03-12T21:10:34+00:00",
@@ -861,10 +2143,73 @@
       "garage": true,
       "area": 2256,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/lisbonne-1-1015x762.jpg",
+      "sourceDescription": "La Lisbonne est une maison contemporaine offrant une cuisine spacieuse, une aire ouverte ainsi qu’une entrée fermée. Elle possède trois chambres à l’étage et une salle de bain avec toilette séparée. Vous y trouverez aussi une buanderie fonctionnelle attenante à la salle d’eau au rez-de-chaussée.",
       "features": [
         "Buanderie",
         "3 chambres",
         "Garage"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Garage",
+          "copy": "Garage chauffé avec accès direct à la maison."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "12’-5’’ x 13’-10’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "17’-4’’ x 14’-6’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "6’-0’’ x 5’-8’’"
+            },
+            {
+              "name": "Salle de lavage",
+              "dimensions": "6’-4’’ x 7’-4’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-7’’ x 13’-10’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-10’’ x 13’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-2’’ x 11’-1’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-7’’ x 10’-8’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "13’-0’’ x 10’-4’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/lisbonne",
       "sourceLastModified": "2024-04-26T12:53:14+00:00",
@@ -885,10 +2230,60 @@
       "garage": false,
       "area": 1275,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/louisbourg-plan.jpg",
+      "sourceDescription": "Avec ses 3 chambres, la Louisbourg est parfaitement adaptée à la vie de famille. Le style champêtre et les multiples rangements vous plairont.",
       "features": [
         "Entrée séparée",
         "3 chambres",
         "Optimisation"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-9’’ x 12’-3’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "16’-5’’ x 13’-10’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-7’’ x 12’-3’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "14’-7’’ x 10’-10’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-0’’ x 10’-0’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-11’’ x 9’-5’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "11’-0’’ x 9’-5’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/louisbourg",
       "sourceLastModified": "2024-03-12T20:46:57+00:00",
@@ -909,10 +2304,56 @@
       "garage": false,
       "area": 936,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/lyon-1-1015x762.jpg",
+      "sourceDescription": "La lyon est le parfait mélange entre simplicité et confort. Cette demeure d’inspiration contemporaine saura vous surprendre, tant par son aire ouverte que par son prix avantageux. Ce modèle est disponible en plusieurs versions pour vous permettre de la personnaliser.",
       "features": [
         "Optimisation",
         "Économique",
         "Aire ouverte spacieuse"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "7’-4’’ x 8’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "16’-6’’ x 15’-9’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-11’ x 11’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "8’-5’’ x 9’-3’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-3’’ x 8’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-9’’ x 8’-11’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/lyon",
       "sourceLastModified": "2024-02-16T18:48:09+00:00",
@@ -933,10 +2374,56 @@
       "garage": false,
       "area": 1070,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/madrid-1-1015x762.jpg",
+      "sourceDescription": "La Madrid, cette demeure aux lignes urbaines, a été pensée afin d’optimiser vos espaces de vie. Laissez-vous impressionner par sa magnifique entrée. Le plan a été conçu pour maximiser le rangement notament dans la chambre principale. D’autres options sont disponibles telles qu’un espace laveuse-sécheuse au rez-de-chaussée ou bien une cuisine parallèle.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Rangement"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Rangement",
+          "copy": "Le plan maximise les espaces de rangement dans la maison."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-6’’ x 9’-10’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "16’-10’’ x 15’-8’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-6’ x 13’-3’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-0’’ x 9’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-5’’ x 9’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-8’’ x 9’-10’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/madrid",
       "sourceLastModified": "2024-02-16T19:09:32+00:00",
@@ -957,10 +2444,60 @@
       "garage": false,
       "area": 1195,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/milan-1-1015x762.jpg",
+      "sourceDescription": "Tant à l’intérieur qu’à l’extérieur, la Grenoble se démarque par son élégance. Elle est facilement adaptable pour un style de maison »Farmhouse ». Son séjour à grande fenestration vous offre un bel éclairage naturel.",
       "features": [
         "Buanderie",
         "Rangement",
         "Intimité"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "Rangement",
+          "copy": "Le plan maximise les espaces de rangement dans la maison."
+        },
+        {
+          "title": "Intimité",
+          "copy": "L'aire ouverte sur l'arrière procure un sentiment de déconnection avec la vie urbaine."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-7’’ x 13’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-8’’ x 14’-1’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-5’ x 12’-2’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-0’’ x 10’-2’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "10’-0’’ x 10’-10’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-5’’ x 13’-11’’"
+            },
+            {
+              "name": "Salle à lavage",
+              "dimensions": "8’-0’’ x 7’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/milan",
       "sourceLastModified": "2024-02-15T21:17:06+00:00",
@@ -981,10 +2518,69 @@
       "garage": false,
       "area": 1881,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/miranda-1-1015x762.jpg",
+      "sourceDescription": "Audacieuse et stylée, la Miranda arbore un look urbain actuel. Grâce à sa fenestration abondante et à ses espaces ouverts, elle promet de longues journées lumineuses. Laissez-vous impressionner par son immense garde-manger type walk-in et sa vaste cuisine. Vous trouverez trois chambres à l’étage dont une pièce walk-in pour la chambre des maîtres.",
       "features": [
         "Buanderie",
         "3 chambres",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "14’-3’’ x 13’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-4’’ x 13’-0’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "8’-4’’ x 7’-11’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "12’-5’’ x 13’-0’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "15’-2’’ x 13’-0’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-3’’ x 10’-7’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-5’’ x 13’-7’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "10’-2’’ x 9’-7’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/miranda",
       "sourceLastModified": "2024-02-16T20:00:49+00:00",
@@ -1005,10 +2601,61 @@
       "garage": false,
       "area": 1379,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/montauban-1-1015x762.jpg",
+      "sourceDescription": "La Montauban vous transporte en pleine nature grâce à ses lignes pures et son vaste patio. La grande aire ouverte se démarque clairement pour sa convivialité. L’architecture contemporaine de ce modèle permet de le personnaliser avec un abris pour voiture ou une terrasse sur le toit.",
       "features": [
         "Grande fenestration",
         "Aire ouverte spacieuse",
         "Garage ouvert"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Garage ouvert",
+          "copy": "La maison permet un abris de voiture."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "11’-11’’ x 12’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "17’-4’’ x 14’-8’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-8’’ x 12’-11’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-11’’ x 12’-7’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-1’’ x 9’-1’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "12’-11’’ x 12’-7’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/montauban",
       "sourceLastModified": "2024-02-16T19:24:37+00:00",
@@ -1029,10 +2676,56 @@
       "garage": false,
       "area": 1343,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/montpellier-1-1015x762.jpg",
+      "sourceDescription": "Combinant le classique et le look contemporain tant apprécié, la Montpellier est unique en son genre. Sa salle de lavage séparée est un atout. Cette demeure est appréciée par sa configuration ingénieuse et ouverte.",
       "features": [
         "Buanderie",
         "Aire ouverte spacieuse",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-0’’ x 11’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "20’-11’’ x 13’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-2’’ x 11’-11’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-4’’ x 11’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-11’’ x 10’-1’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-5’’ x 11’-9’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/montpellier",
       "sourceLastModified": "2024-02-21T21:03:14+00:00",
@@ -1053,10 +2746,56 @@
       "garage": false,
       "area": 1120,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/nantes-1-1015x762.jpg",
+      "sourceDescription": "La Nantes a tout du chalet qui fait rêver: une fenestration optimisé en façade qui laisse entrer chez vous, la nature et sa lumière. L’aire ouverte vous permet d’avoir l’espace nécessaire pour recevoir.",
       "features": [
         "Grande fenestration",
         "Aire ouverte spacieuse",
         "Toit cathédrale"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Toit cathédrale",
+          "copy": "Surface de plafond surélevée"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "11’-3’’ x 12’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-10’’ x 12’-11’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-1’’ x 10’-2’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-9’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-1’’ x 9’-1’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "11’-2’’ x 12’-11’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/nantes",
       "sourceLastModified": "2024-02-16T19:41:15+00:00",
@@ -1077,10 +2816,69 @@
       "garage": false,
       "area": 1320,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/nice-1-1-1015x762.jpg",
+      "sourceDescription": "Votre prochain endroit préféré? Le Nice-1. Ce chalet grandiose vous permet, grâce à ses deux grandes terrasses, vous permettra de vous relaxer en plein coeur de la nature.",
       "features": [
         "Grande fenestration",
         "Rez-de-jardin",
         "Optimisation"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Rez-de-jardin",
+          "copy": "Étage supplémentaire accessible par le jardin"
+        },
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-8’’ x 12’-10’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "22’-7’’ x 14’-0’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "5’-1’’ x 8’-3’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "22’-7’’ x 14’-0’’"
+            }
+          ]
+        },
+        {
+          "name": "Sous-sol",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-3’’ x 12’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-10’’ x 9’-8’’"
+            },
+            {
+              "name": "Salle mécanique",
+              "dimensions": "7’-0’’ x 5’-1’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "5’-0’’ x 11’-8’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/nice-1",
       "sourceLastModified": "2024-03-12T21:05:36+00:00",
@@ -1101,10 +2899,69 @@
       "garage": false,
       "area": 1320,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/nice-2-1-1015x762.jpg",
+      "sourceDescription": "Voici votre prochain chalet, le Nice-2. Ce chalet grandiose vous permet, grâce à ses deux grandes terrasses,vous permettera de vous relaxer en plein coeur de la nature.",
       "features": [
         "Grande fenestration",
         "Rez-de-jardin",
         "Optimisation"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Rez-de-jardin",
+          "copy": "Étage supplémentaire accessible par le jardin"
+        },
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-8’’ x 12’-10’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "22’-7’’ x 14’-0’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "5’-1’’ x 8’-3’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "22’-7’’ x 14’-0’’"
+            }
+          ]
+        },
+        {
+          "name": "Sous-sol",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "10’-9’’ x 9’-0’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "10’-0’’ x 11’-2’’"
+            },
+            {
+              "name": "Salle de lavage",
+              "dimensions": "9’-0’’ x 6’-2’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-0’’ x 8’-4’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/nice-2",
       "sourceLastModified": "2024-03-12T21:08:08+00:00",
@@ -1125,10 +2982,56 @@
       "garage": false,
       "area": 1019,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/orleans-1-1015x762.jpg",
+      "sourceDescription": "L’Orléans est la parfaite demeure pour les premiers acheteurs de maison: aménagement intérieur pratique, lumière en abondance et espace de vie aéré. Sa simplicité en fait un choix économique et chaleureux.",
       "features": [
         "Optimisation",
         "Économique",
         "Rangement"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable."
+        },
+        {
+          "title": "Rangement",
+          "copy": "Le plan maximise les espaces de rangement dans la maison."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "12’-7’’ x 10’-9’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-7’’ x 10’-3’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "14’-3’ x 11’-0’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "12’-1’’ x 9’-11’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-1’’ x 9’-8’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "14’-11’’ x 7’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/orleans",
       "sourceLastModified": "2024-02-16T18:42:14+00:00",
@@ -1149,10 +3052,56 @@
       "garage": false,
       "area": 1046,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/provence-1-1015x762.jpg",
+      "sourceDescription": "La Provence est un magnifique modèle économique. Les espaces ouverts laissant entrer la lumière naturelle rendent la maison chaleureuse. Venez visiter sur place ce modèle bien aimé de nos clients.",
       "features": [
         "Optimisation",
         "Économique",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable."
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-7’’ x 10’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-6’’ x 13’-10’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-9’’ x 10’-11’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "10’-11’’ x 14’-4’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-5’’ x 11’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-10’’ x 10’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/provence",
       "sourceLastModified": "2024-03-12T20:56:42+00:00",
@@ -1173,10 +3122,56 @@
       "garage": false,
       "area": 1102,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/singapour-1-1015x762.jpg",
+      "sourceDescription": "Les 1102 pieds carrés ont été maximisés afin de vous offrir une grande cuisine et une salle de bain moderne complète. L’espace de cuisson est positionné sur l’îlot. De plus, l’espace ouvert vous donne accès à une terrasse extérieure, axée sur le plaisir et la détente! Ce modèle se démarque par son aspect extérieur contemporain.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "13’-8’’ x 10’-0’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "17’-9’’ x 11’-0’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "17’-9’’ x 7’-7’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-6’’ x 12’-4’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-10’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "9’-1’’ x 10’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/singapour",
       "sourceLastModified": "2024-04-23T12:41:02+00:00",
@@ -1197,10 +3192,73 @@
       "garage": false,
       "area": 1706,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/spezia-1-1015x762.jpg",
+      "sourceDescription": "Vous serez d’abord charmé par son vaste entrée à aire ouverte. Le rez-de-chaussée est équipé d’une salle d’eau et une salle de lavage complète. La cuisine ergonomique et moderne saura également vous charmer par son généreux îlot. Le remarquable escalier donne accès à l’étage où vous trouverez trois chambres spacieuses ainsi qu ‘une salle de bain qui répondront aux besoins de votre famille.",
       "features": [
         "Buanderie",
         "3 chambres",
         "Grande fenestration"
+      ],
+      "featureDetails": [
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle"
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "9’-7’’ x 12’-6’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "13’-7’’ x 16’-1’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "7’-1’’ x 5’-6’’"
+            },
+            {
+              "name": "Salle de lavage",
+              "dimensions": "7’-1’’ x 5’-6’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "12’-0’’ x 12’-6’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "13’-0’’ x 12’-11’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "11’-6’’ x 10’-11’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-0’’ x 10’-11’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-5’’ x 15’-1’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/spezia",
       "sourceLastModified": "2024-02-16T19:57:10+00:00",
@@ -1221,10 +3279,56 @@
       "garage": false,
       "area": 1076,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/torino-1-1015x762.jpg",
+      "sourceDescription": "La Torino est un magnifique plein-pied contemporain. La laveuse-sécheuse au rez-de-chaussée ainsi que l’emplacement des pièces la rendent très populaire.",
       "features": [
         "Optimisation",
         "Aire ouverte spacieuse",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Optimisation",
+          "copy": "Plan conçue afin de maximiser chaque pièce."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit un espace laveuse-sécheuse."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "8’-7’’ x 10’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "15’-6’’ x 16’-0’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "9’-10’’ x 10’-11’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "10’-10’’ x 14’-4’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-5’’ x 11’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "7’-8’’ x 10’-6’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/torino",
       "sourceLastModified": "2024-02-21T21:00:55+00:00",
@@ -1245,10 +3349,69 @@
       "garage": false,
       "area": 1582,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/valence-1-1015x762.jpg",
+      "sourceDescription": "Sa lucarne et ses airs de campagne lui confèrent un charme irrésistible. Ses divisions amènent un sentiment réconfortant des maisons ancestrales.",
       "features": [
         "Entrée séparée",
         "3 chambres",
         "Buanderie"
+      ],
+      "featureDetails": [
+        {
+          "title": "Entrée séparée",
+          "copy": "La configuration permet plus d'intimité avec l'aire de vie."
+        },
+        {
+          "title": "3 chambres",
+          "copy": "La maison contient 3 chambres séparées"
+        },
+        {
+          "title": "Buanderie",
+          "copy": "Le plan du rez-de-chaussée prévoit une salle de lavage séparée."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "12’-8’’ x 8’-11’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "12’-6’’ x 17’-2’’"
+            },
+            {
+              "name": "Salle d’eau",
+              "dimensions": "5’-0’’ x 7’-7’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "13’-11’’ x 11’-0’’"
+            }
+          ]
+        },
+        {
+          "name": "Étage",
+          "rooms": [
+            {
+              "name": "Chambre 1",
+              "dimensions": "12’-6’’ x 12’-10’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "12’-9’’ x 11’-0’’"
+            },
+            {
+              "name": "Chambre 3",
+              "dimensions": "10’-8’’ x 9’-3’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "8’-11’’ x 11’-0’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/valence",
       "sourceLastModified": "2024-03-12T21:13:08+00:00",
@@ -1269,10 +3432,56 @@
       "garage": false,
       "area": 1080,
       "imageUrl": "https://maisonsturner.ca/app/uploads/2024/02/vienne-1-1015x762.jpg",
+      "sourceDescription": "La Vienne est une demeure de rêve à prix accessible. Avec ses 1080 pi2, elle est le mélange parfait entre un chalet et une maison de ville. Le grand perron couvert en façade rend la Vienne très accueillante et son aire ouverte est très fonctionnelle.",
       "features": [
         "Grande fenestration",
         "Économique",
         "Aire ouverte spacieuse"
+      ],
+      "featureDetails": [
+        {
+          "title": "Grande fenestration",
+          "copy": "Surface d'ouverture généreuse offrant une grande luminosité naturelle."
+        },
+        {
+          "title": "Économique",
+          "copy": "Prix abordable."
+        },
+        {
+          "title": "Aire ouverte spacieuse",
+          "copy": "Espace de vie incluant la cuisine, la salle à manger et le séjour."
+        }
+      ],
+      "planLevels": [
+        {
+          "name": "Rez-de-chaussée",
+          "rooms": [
+            {
+              "name": "Cuisine",
+              "dimensions": "11’-10’’ x 9’-9’’"
+            },
+            {
+              "name": "Séjour",
+              "dimensions": "14’-5’’ x 12’-11’’"
+            },
+            {
+              "name": "Chambre 1",
+              "dimensions": "11’-7’’ x 11’-3’’"
+            },
+            {
+              "name": "Chambre 2",
+              "dimensions": "9’-8’’ x 10’-6’’"
+            },
+            {
+              "name": "Salle de bain",
+              "dimensions": "6’-3’ x 9’-4’’"
+            },
+            {
+              "name": "Salle à manger",
+              "dimensions": "13’-9’’ x 10’-10’’"
+            }
+          ]
+        }
       ],
       "sourceUrl": "https://maisonsturner.ca/modeles/vienne",
       "sourceLastModified": "2026-03-09T19:27:48+00:00",

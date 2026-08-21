@@ -2,11 +2,11 @@ import http from 'node:http';
 import { readFile, stat, mkdir, appendFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gunzip } from 'node:zlib';
+import { brotliCompressSync, constants as zlibConstants, gzipSync, gunzip } from 'node:zlib';
 import { promisify } from 'node:util';
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import { parseDirectory, parseFlag, parseHost, parseHttpUrl, parseOrigin, parsePort } from './scripts/runtime-config.mjs';
-import { buildSitemapXml, renderCatalogPage, renderModelPage } from './lib/seo-pages.mjs';
+import { buildSitemapXml, faviconLinks, renderCatalogPage, renderModelPage } from './lib/seo-pages.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const port = parsePort(process.env.PORT);
@@ -32,11 +32,14 @@ const mime = {
   '.webp': 'image/webp',
   '.avif': 'image/avif',
   '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
   '.gz': 'application/octet-stream',
 };
 
 const noStoreExts = new Set(['.html', '.js', '.json', '.gz']);
 const jsonMaxBytes = 64 * 1024;
+const compressionMinBytes = 1024;
+const initialModelLimit = 9;
 const rateLimits = new Map();
 let nextRateLimitSweep = 0;
 
@@ -47,30 +50,49 @@ const securityHeaders = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
 
+function officialImageVariant(url, size = '540x405') {
+  const source = String(url || '');
+  return /-1015x762\.jpg$/i.test(source)
+    ? source.replace(/-1015x762\.jpg$/i, `-${size}.jpg.webp`)
+    : `${source}.webp`;
+}
+
+const athenesImage = officialContent.models.find(model => model.id === 'athenes')?.imageUrl;
+if (!athenesImage) throw new Error('The official Athènes hero image is missing.');
+const heroVisual = {
+  src: officialImageVariant(athenesImage, '1015x762'),
+  srcset: [
+    `${officialImageVariant(athenesImage, '540x405')} 540w`,
+    `${officialImageVariant(athenesImage, '773x580')} 773w`,
+    `${officialImageVariant(athenesImage, '1015x762')} 1015w`,
+  ].join(', '),
+  sizes: '(max-width: 900px) 100vw, 57vw',
+};
+
 const visualSourceMap = new Map([
-  ['./public/images/hero-turner.webp', 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg'],
-  ['./public/images/hero-turner.avif', 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg'],
-  ['./public/images/collection-chalet.webp', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
-  ['./public/images/collection-chalet.avif', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
-  ['./public/images/collection-plain-pied.webp', 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg'],
-  ['./public/images/collection-plain-pied.avif', 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg'],
-  ['./public/images/collection-two-storey.webp', 'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg'],
-  ['./public/images/collection-two-storey.avif', 'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg'],
-  ['./public/images/athenes-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg'],
-  ['./public/images/prague-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg'],
-  ['./public/images/oslo-generated.avif', 'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg'],
+  ['./public/images/hero-turner.webp', heroVisual.src],
+  ['./public/images/hero-turner.avif', heroVisual.src],
+  ['./public/images/collection-chalet.webp', officialImageVariant(officialContent.models.find(model => model.id === 'oslo')?.imageUrl)],
+  ['./public/images/collection-chalet.avif', officialImageVariant(officialContent.models.find(model => model.id === 'oslo')?.imageUrl)],
+  ['./public/images/collection-plain-pied.webp', officialImageVariant(officialContent.models.find(model => model.id === 'prague')?.imageUrl)],
+  ['./public/images/collection-plain-pied.avif', officialImageVariant(officialContent.models.find(model => model.id === 'prague')?.imageUrl)],
+  ['./public/images/collection-two-storey.webp', officialImageVariant(officialContent.models.find(model => model.id === 'portofino')?.imageUrl)],
+  ['./public/images/collection-two-storey.avif', officialImageVariant(officialContent.models.find(model => model.id === 'portofino')?.imageUrl)],
+  ['./public/images/athenes-generated.avif', officialImageVariant(athenesImage)],
+  ['./public/images/prague-generated.avif', officialImageVariant(officialContent.models.find(model => model.id === 'prague')?.imageUrl)],
+  ['./public/images/oslo-generated.avif', officialImageVariant(officialContent.models.find(model => model.id === 'oslo')?.imageUrl)],
 ]);
 
 const preloadVisuals = [
-  'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg',
-  'https://maisonsturner.ca/app/uploads/2024/02/oslo-1-1015x762.jpg',
-  'https://maisonsturner.ca/app/uploads/2024/03/prague-1-1015x762.jpg',
-  'https://maisonsturner.ca/app/uploads/2024/02/portofino-1-1015x762.jpg',
+  heroVisual.src,
+  officialImageVariant(officialContent.models.find(model => model.id === 'oslo')?.imageUrl),
+  officialImageVariant(officialContent.models.find(model => model.id === 'prague')?.imageUrl),
+  officialImageVariant(officialContent.models.find(model => model.id === 'portofino')?.imageUrl),
 ];
 
 const seoTitle = 'Maisons usinées au Québec | Maisons S. Turner';
 const seoDescription = `Découvrez ${officialContent.models.length} modèles de maisons et chalets usinés personnalisables, fabriqués au Québec par Maisons S. Turner, avec un accompagnement clair du terrain aux clés.`;
-const seoImage = preloadVisuals[0];
+const seoImage = 'https://maisonsturner.ca/app/uploads/2024/02/athenes-1-2000x1000.jpg';
 
 const visualBaseline = {
   mode: 'restored-rich-layout',
@@ -106,7 +128,10 @@ const implementationStatus = {
   ],
 };
 
-const fallbackModels = officialContent.models;
+const fallbackModels = officialContent.models.map(({ sourceDescription, featureDetails, planLevels, ...model }) => ({
+  ...model,
+  imageUrl: officialImageVariant(model.imageUrl),
+}));
 const fallbackProcessSteps = officialContent.processSteps;
 const fallbackFaqItems = officialContent.faqItems;
 const fallbackInclusionGroups = officialContent.inclusionGroups;
@@ -397,6 +422,21 @@ function patchVisualUrls(source) {
   return out;
 }
 
+function replaceRequired(source, search, replacement, label) {
+  if (!source.includes(search)) throw new Error(`${label} could not be updated safely.`);
+  return source.replace(search, replacement);
+}
+
+function enhanceHomepagePerformance(source) {
+  const heroImage = `<img src="${heroVisual.src}" alt="Maison modulaire contemporaine au bord d’un lac dans un paysage boisé québécois" fetchpriority="high" decoding="async" />`;
+  const responsiveHero = `<img src="${heroVisual.src}" srcset="${heroVisual.srcset}" sizes="${heroVisual.sizes}" width="1015" height="762" alt="Maison modèle Athènes dans un paysage boisé" fetchpriority="high" decoding="async" />`;
+  const modelGrid = '<div class="model-grid" id="model-grid" aria-live="polite"></div>';
+  const progressiveGrid = `${modelGrid}\n      <div class="catalog-pagination" id="catalog-pagination" hidden>\n        <button class="button button-secondary" type="button" id="show-more-models">Afficher plus de modèles</button>\n        <a class="button button-dark" href="/modeles/">Voir les 44 fiches</a>\n      </div>`;
+  let output = replaceRequired(source, heroImage, responsiveHero, 'The responsive homepage hero');
+  output = replaceRequired(output, modelGrid, progressiveGrid, 'The progressive homepage catalogue');
+  return output;
+}
+
 function replaceClientArray(source, name, value) {
   const startMarker = `  const ${name} = [`;
   const start = source.indexOf(startMarker);
@@ -420,7 +460,7 @@ function patchClientJs(source) {
     output = output.replace(legacyHandler, '');
   }
 
-  output = replaceClientArray(output, 'models', officialContent.models);
+  output = replaceClientArray(output, 'models', fallbackModels);
   output = replaceClientArray(output, 'processSteps', officialContent.processSteps);
   output = replaceClientArray(output, 'faqItems', officialContent.faqItems);
   output = replaceClientArray(output, 'inclusionGroups', officialContent.inclusionGroups);
@@ -433,12 +473,62 @@ function patchClientJs(source) {
     .replace('models: models.map(({ remoteImage, localImage, ...model }) => model),', 'models: models.map((model) => ({ ...model })),')
     .replace('href="https://maisonsturner.ca/modeles/${model.id}"', 'href="${escapeHTML(model.sourceUrl)}"')
     .replace('La comparaison porte sur les données publiques utilisées dans ce prototype. Un conseiller doit confirmer les options et modifications possibles.', 'La comparaison porte sur les spécifications publiées par Turner. Les options doivent être confirmées avec un conseiller.');
+
+  output = replaceRequired(
+    output,
+    `  const state = {\n    filters: { type: '', style: '', bedrooms: '', garage: '', area: '' },\n    compared: new Set(),\n    currentProcessStep: 0\n  };`,
+    `  const state = {\n    filters: { type: '', style: '', bedrooms: '', garage: '', area: '' },\n    compared: new Set(),\n    currentProcessStep: 0,\n    visibleModelCount: ${initialModelLimit}\n  };`,
+    'The homepage catalogue state',
+  );
+  output = replaceRequired(
+    output,
+    `    const filtered = getFilteredModels();\n    $('#result-count').textContent`,
+    `    const filtered = getFilteredModels();\n    const visible = filtered.slice(0, state.visibleModelCount);\n    $('#result-count').textContent`,
+    'The homepage catalogue window',
+  );
+  output = replaceRequired(
+    output,
+    `      grid.innerHTML = '';\n      empty.hidden = false;\n      return;`,
+    `      grid.innerHTML = '';\n      empty.hidden = false;\n      $('#catalog-pagination').hidden = true;\n      return;`,
+    'The empty catalogue state',
+  );
+  output = replaceRequired(output, '    grid.innerHTML = filtered.map((model, index) => `', '    grid.innerHTML = visible.map((model, index) => `', 'The progressive catalogue renderer');
+  output = replaceRequired(
+    output,
+    `    \`).join('');\n  }\n\n  function resetFilters`,
+    `    \`).join('');\n\n    const remaining = Math.max(filtered.length - visible.length, 0);\n    const pagination = $('#catalog-pagination');\n    const showMore = $('#show-more-models');\n    pagination.hidden = false;\n    showMore.hidden = remaining === 0;\n    showMore.textContent = remaining > 0\n      ? \`Afficher \${Math.min(${initialModelLimit}, remaining)} modèle\${Math.min(${initialModelLimit}, remaining) > 1 ? 's' : ''} de plus\`\n      : '';\n  }\n\n  function resetFilters`,
+    'The progressive catalogue controls',
+  );
+  output = replaceRequired(
+    output,
+    `  function resetFilters({ scroll = false } = {}) {\n    state.filters =`,
+    `  function resetFilters({ scroll = false } = {}) {\n    state.visibleModelCount = ${initialModelLimit};\n    state.filters =`,
+    'The catalogue reset limit',
+  );
+  output = replaceRequired(
+    output,
+    `  function syncFiltersFromForm() {\n    state.filters =`,
+    `  function syncFiltersFromForm() {\n    state.visibleModelCount = ${initialModelLimit};\n    state.filters =`,
+    'The filtered catalogue limit',
+  );
+  output = replaceRequired(
+    output,
+    `    $('#reset-filters').addEventListener('click', () => resetFilters());\n    $('#empty-reset').addEventListener('click', () => resetFilters());`,
+    `    $('#reset-filters').addEventListener('click', () => resetFilters());\n    $('#empty-reset').addEventListener('click', () => resetFilters());\n    $('#show-more-models').addEventListener('click', () => {\n      state.visibleModelCount += ${initialModelLimit};\n      renderModels();\n    });`,
+    'The show-more catalogue control',
+  );
+  output = replaceRequired(
+    output,
+    `  document.addEventListener('DOMContentLoaded', init);`,
+    `  const scheduleInit = () => {\n    if ('requestIdleCallback' in window) window.requestIdleCallback(init, { timeout: 500 });\n    else setTimeout(init, 0);\n  };\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleInit, { once: true });\n  else scheduleInit();`,
+    'The post-paint client initialization',
+  );
   return output;
 }
 
 function baselineHeadMarkup() {
   const baselineJson = JSON.stringify({ ...visualBaseline, preloadVisuals }).replaceAll('</script', '<\\/script');
-  return `\n<meta name="turner-baseline" content="${escapeHtml(`${visualBaseline.mode}/${visualBaseline.payload}`)}">\n<meta name="turner-content-verified-at" content="${escapeHtml(officialContent.verifiedAt)}">\n<link rel="preconnect" href="https://maisonsturner.ca" crossorigin>\n<link rel="dns-prefetch" href="//maisonsturner.ca">\n<link rel="preload" as="image" href="${escapeHtml(preloadVisuals[0])}" fetchpriority="high">\n<script>window.__TURNER_BASELINE__=${baselineJson};</script>`;
+  return `\n<meta name="turner-baseline" content="${escapeHtml(`${visualBaseline.mode}/${visualBaseline.payload}`)}">\n<meta name="turner-content-verified-at" content="${escapeHtml(officialContent.verifiedAt)}">\n<link rel="preconnect" href="https://maisonsturner.ca" crossorigin>\n<link rel="dns-prefetch" href="//maisonsturner.ca">\n<link rel="preload" as="image" type="image/webp" href="${escapeHtml(heroVisual.src)}" imagesrcset="${escapeHtml(heroVisual.srcset)}" imagesizes="${escapeHtml(heroVisual.sizes)}" media="(min-width: 901px)" fetchpriority="high">\n<script>window.__TURNER_BASELINE__=${baselineJson};</script>`;
 }
 
 function seoHeadMarkup() {
@@ -498,6 +588,7 @@ function seoHeadMarkup() {
   }).replaceAll('<', '\\u003c');
   return `<meta name="robots" content="${indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'}">
 <link rel="canonical" href="${escapeHtml(canonical)}">
+${faviconLinks(publicOrigin)}
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_CA">
 <meta property="og:site_name" content="Maisons S. Turner">
@@ -597,6 +688,7 @@ const compareCss = `
 const fallbackCss = `
 /* Completion layer: only fills missing original-runtime sections. */
 .form-status[data-state="pending"]{color:var(--muted,#64707a)}.form-status[data-state="error"]{color:#a2382b}.form-status[data-state="success"]{color:var(--success,#26734d)}
+.catalog-pagination{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:28px}.catalog-pagination[hidden],.catalog-pagination #show-more-models[hidden]{display:none}.catalog-pagination a{text-decoration:none}
 .official-content-note{margin-top:4px;font-size:.78rem;color:var(--muted,#64707a)}.official-content-note a,.contact-hours a,.consent a{color:inherit;text-decoration:underline;text-underline-offset:3px}.certification-grid article a{display:flex;flex-direction:column;justify-content:center;width:100%;height:100%;color:inherit;text-decoration:none}.certification-grid article small{margin-top:5px;font-size:.68rem;text-transform:uppercase}.certification-note{padding-top:12px;padding-bottom:18px;font-size:.78rem;line-height:1.5}.model-card,.turner-fallback-card{content-visibility:auto;contain-intrinsic-size:520px}.contact-hours a{min-height:32px;margin-top:4px;font-size:.75rem}
 .brand,.compare-toggle,.details-button,.quote-button,.text-button,.turner-fallback-actions button,.turner-fallback-actions a{min-height:44px}.model-actions a.details-button{display:inline-flex;align-items:center;font-size:.78rem;font-weight:780;text-decoration:none}.model-actions a.details-button:hover{text-decoration:underline;text-underline-offset:4px}.consent{min-height:44px}.consent input[type="checkbox"]{min-width:18px;min-height:18px}.range-field input[type="range"]{min-height:44px;touch-action:pan-y}@media(max-width:720px){footer a,footer button{display:flex;align-items:center;min-height:44px}.compare-mini-button,.compare-return{min-height:44px}.faq-question{grid-template-columns:34px minmax(0,1fr) 48px}.faq-plus{justify-self:center}}
 .turner-honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}.turner-fallback-models{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:18px 0 40px}.turner-fallback-card{background:var(--white,#fff);border:1px solid var(--border,#eadfd4);border-radius:8px;overflow:hidden;box-shadow:0 14px 36px rgba(9,31,44,.09)}.turner-fallback-card img{width:100%;height:190px;object-fit:cover}.turner-fallback-card-body{padding:16px}.turner-fallback-card h3{font-family:var(--display-font,Georgia,serif);font-size:1.7rem;margin:.2rem 0}.turner-fallback-card p{color:var(--muted,#64707a);margin:.25rem 0 .8rem}.turner-fallback-tag{display:inline-flex;margin-top:-38px;margin-left:12px;position:relative;z-index:1;background:rgba(9,31,44,.88);color:white;border-radius:999px;padding:7px 10px;font-size:.72rem;font-weight:800}.turner-fallback-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.turner-fallback-specs span{background:var(--cream,#f6f1ea);border-radius:8px;padding:9px;text-align:center;font-size:.78rem}.turner-fallback-actions{display:flex;gap:8px}.turner-fallback-actions button,.turner-fallback-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid var(--copper,#bd6740);border-radius:8px;background:white;color:var(--copper,#bd6740);font-weight:800;padding:0 13px;text-decoration:none}.turner-fallback-panel,.turner-fallback-faq{border:1px solid var(--border,#eadfd4);border-radius:8px;background:white;padding:22px;margin-top:14px}.turner-fallback-panel h3{font-family:var(--display-font,Georgia,serif);font-size:2rem;margin:.2rem 0}.turner-fallback-panel ul{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:8px}.turner-fallback-panel li{background:var(--cream,#f6f1ea);border-radius:8px;padding:10px}.turner-fallback-faq details{border:1px solid var(--border,#eadfd4);border-radius:8px;background:white;margin:10px 0;overflow:hidden}.turner-fallback-faq summary{cursor:pointer;font-weight:900;padding:15px 16px}.turner-fallback-faq p{padding:0 16px 16px;margin:0;color:var(--muted,#64707a);line-height:1.5}.turner-toast{position:fixed;z-index:500;left:16px;right:16px;bottom:16px;background:#071b27;color:white;border-radius:8px;padding:13px 16px;text-align:center;box-shadow:0 16px 44px rgba(0,0,0,.24)}html{scroll-behavior:smooth}body{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}.hero h1,.title,.section-title,.display{text-wrap:balance}body.turner-compare-visible{padding-bottom:96px}@media(max-width:720px){.turner-fallback-models{grid-template-columns:1fr}.turner-fallback-card img{height:210px}body.turner-compare-visible{padding-bottom:128px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
@@ -945,11 +1037,15 @@ function completionJs() {
       if (event.target.closest('#clear-compare')) { let remove=$('[data-remove-compare]'), guard=0; while(remove && guard++<10){remove.click();remove=$('[data-remove-compare]');} fallbackCompared.clear(); updateFallbackCompareUi(); const tray=$('#compare-tray'), show=$('#show-compare'); if (tray) tray.hidden=true; if (show) show.hidden=true; compareSync(); }
       if (window.TurnerPrototype && event.target.closest('[data-compare-id], [data-remove-compare]')) queueMicrotask(compareSync);
     });
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true }); else initialize();
+    const scheduleInitialize = () => {
+      if ('requestIdleCallback' in window) window.requestIdleCallback(initialize, { timeout: 800 });
+      else setTimeout(initialize, 0);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleInitialize, { once: true }); else scheduleInitialize();
   })();`;
 }
 
-async function renderApp() {
+async function buildRenderedApp() {
   const [rawHtml, rawCss, rawJs] = await Promise.all([
     gunzipText('payload/index.html.gz'),
     gunzipText('payload/styles.css.gz'),
@@ -959,7 +1055,8 @@ async function renderApp() {
     .replace(/<script\s+src=["']\.\/app\.js["']\s+defer><\/script>/g, '')
     .replace(/<link\s+rel=["']stylesheet["']\s+href=["']\.\/styles\.css["']\s*\/?>/gi, '');
   let html = enhanceSeo(rawDocument);
-  html = enhanceOfficialContent(enhanceContact(enhanceCompare(patchVisualUrls(html))));
+  html = enhanceHomepagePerformance(patchVisualUrls(html));
+  html = enhanceOfficialContent(enhanceContact(enhanceCompare(html)));
   const css = patchVisualUrls(rawCss);
   const safeJs = fallbackOnly ? '' : patchVisualUrls(patchClientJs(rawJs)).replaceAll('</script>', '<\\/script>');
   const completeJs = completionJs().replaceAll('</script>', '<\\/script>');
@@ -968,20 +1065,80 @@ async function renderApp() {
     .replace('</body>', () => `${safeJs ? `<script>${safeJs}</script>` : ''}<script>${completeJs}</script></body>`);
 }
 
+let renderedAppPromise;
+function renderApp() {
+  if (!renderedAppPromise) {
+    renderedAppPromise = buildRenderedApp().catch(error => {
+      renderedAppPromise = undefined;
+      throw error;
+    });
+  }
+  return renderedAppPromise;
+}
+
+function isCompressible(type) {
+  return type.startsWith('text/') || /^(application\/(json|javascript|xml)|image\/svg\+xml)/i.test(type);
+}
+
+function preferredEncoding(header) {
+  const qualities = new Map();
+  for (const item of String(header || '').split(',')) {
+    const [rawName, ...parameters] = item.trim().split(';');
+    const name = rawName.toLowerCase();
+    if (!name) continue;
+    const qualityParameter = parameters.map(parameter => parameter.trim()).find(parameter => parameter.startsWith('q='));
+    const quality = qualityParameter ? Number(qualityParameter.slice(2)) : 1;
+    qualities.set(name, Number.isFinite(quality) ? Math.max(0, Math.min(1, quality)) : 0);
+  }
+  const wildcard = qualities.get('*') || 0;
+  const candidates = [
+    { name: 'br', quality: qualities.has('br') ? qualities.get('br') : wildcard, priority: 2 },
+    { name: 'gzip', quality: qualities.has('gzip') ? qualities.get('gzip') : wildcard, priority: 1 },
+  ].filter(candidate => candidate.quality > 0);
+  candidates.sort((left, right) => right.quality - left.quality || right.priority - left.priority);
+  return candidates[0]?.name || null;
+}
+
+function mergeVary(existing, value) {
+  const values = new Set(String(existing || '').split(',').map(item => item.trim()).filter(Boolean));
+  values.add(value);
+  return [...values].join(', ');
+}
+
 function send(res, status, body, type = 'text/plain; charset=utf-8', cache = 'no-store, max-age=0', headers = {}) {
   const payload = Buffer.isBuffer(body) ? body : Buffer.from(String(body ?? ''));
+  const responseHeaders = { ...headers };
+  const canCompress = payload.length >= compressionMinBytes && isCompressible(type) && !responseHeaders['Content-Encoding'];
+  let representation = payload;
+  if (canCompress) {
+    responseHeaders.Vary = mergeVary(responseHeaders.Vary, 'Accept-Encoding');
+    const encoding = preferredEncoding(res.req?.headers['accept-encoding']);
+    if (encoding === 'br') {
+      representation = brotliCompressSync(payload, {
+        params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 4 },
+      });
+      responseHeaders['Content-Encoding'] = 'br';
+    } else if (encoding === 'gzip') {
+      representation = gzipSync(payload, { level: 6 });
+      responseHeaders['Content-Encoding'] = 'gzip';
+    }
+  }
   res.writeHead(status, {
     ...securityHeaders,
     'Content-Type': type,
-    'Content-Length': payload.length,
+    'Content-Length': representation.length,
     'Cache-Control': cache,
-    ...headers,
+    ...responseHeaders,
   });
-  res.end(res.req?.method === 'HEAD' ? undefined : payload);
+  res.end(res.req?.method === 'HEAD' ? undefined : representation);
 }
 
 function sendJson(res, status, payload, headers = {}) {
   send(res, status, JSON.stringify(payload, null, 2), mime['.json'], 'no-store, max-age=0', headers);
+}
+
+function permanentRedirect(res, location) {
+  send(res, 308, 'Permanent redirect', 'text/plain; charset=utf-8', 'public, max-age=3600', { Location: location });
 }
 
 function methodNotAllowed(res, allowed) {
@@ -1028,11 +1185,13 @@ const server = http.createServer(async (req, res) => {
     if (route === 'api/project-intake') return await handleProjectIntake(req, res);
     if (!isReadRequest(req)) return methodNotAllowed(res, ['GET', 'HEAD']);
     if (route === '' || route === 'index.html') return send(res, 200, await renderApp(), mime['.html']);
-    if (route === 'modeles' || route === 'modeles/') return send(res, 200, renderCatalogPage({ content: officialContent, publicOrigin, indexable }), mime['.html']);
-    const modelRoute = /^modeles\/([a-z0-9-]+)\/?$/.exec(route);
+    if (route === 'modeles') return permanentRedirect(res, publicUrl('/modeles/'));
+    if (route === 'modeles/') return send(res, 200, renderCatalogPage({ content: officialContent, publicOrigin, indexable }), mime['.html']);
+    const modelRoute = /^modeles\/([a-z0-9-]+)(\/?)$/.exec(route);
     if (modelRoute) {
       const model = officialContent.models.find(candidate => candidate.id === modelRoute[1]);
       if (!model) return send(res, 404, 'Not found');
+      if (modelRoute[2] !== '/') return permanentRedirect(res, publicUrl(`/modeles/${model.id}/`));
       return send(res, 200, renderModelPage({ model, content: officialContent, publicOrigin, indexable }), mime['.html']);
     }
 
@@ -1045,7 +1204,7 @@ const server = http.createServer(async (req, res) => {
     }
     const ext = extname(filePath).toLowerCase();
     const body = await readFile(filePath);
-    send(res, 200, body, mime[ext] || 'application/octet-stream', noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=3600');
+    send(res, 200, body, mime[ext] || 'application/octet-stream', noStoreExts.has(ext) ? 'no-store, max-age=0' : 'public, max-age=2592000');
   } catch (error) {
     sendJson(res, error.status || 500, { ok: false, error: error.message || 'Server error' });
   }
